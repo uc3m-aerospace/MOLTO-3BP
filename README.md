@@ -18,7 +18,7 @@ A recent version of Matlab is needed to run the code (R2016a or newer).
 In order to optimize a mission, the user needs to call the main function *molto_3bp.m* providing an input structure. The user only need to define the departure and target orbit radiuses. Here you have an example:
 
 ```matlab
-% MISSION FROM Geostationary Earth Orbit to a circular Low Moon Orbit.
+% MISSION from Geostationary Earth Orbit to Low Moon Orbit.
 %% Initial Data
 R_e  = 6378;                                   % [km] Mean Earth's radius
 R_m  = 1738;                                   % [km] Mean Moon's radius
