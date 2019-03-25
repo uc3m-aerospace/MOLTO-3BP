@@ -44,7 +44,6 @@ input.useParallel   = 'yes'; % (yes/no) Compute fitness function in paralle
 % RUN MOLTO-IT ALGORITHM
 output = molto_3bp(input)
 
-
 ## Acknowledgment
 
 This code was developed by Nereida Agüera during her Master Thesis. Andrés Marco modified and enhanced part of the code in his Master Thesis. Thnaks also to Mick Wijnen for his contribution. 
