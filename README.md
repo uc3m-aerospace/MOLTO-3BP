@@ -13,6 +13,11 @@ Installation requires simply that you download [MOLTO-3BP](https://github.com/uc
 ### Dependencies
 A recent version of Matlab is needed to run the code (R2016a or newer). 
 
+## Acknowledgment
+
+This code was developed by Nereida Agüera during her Master Thesis. Andrés Marco modified and enhanced part of the code in his Master Thesis. Thanks also to Mick Wijnen for his contribution. 
+
+
 ## Quick Usage Guide
 
 In order to optimize a mission, the user needs to call the main function *molto_3bp.m* providing an input structure. The user only need to define the departure and target orbit radiuses. Here you have an example:
@@ -43,7 +48,3 @@ input.useParallel   = 'yes'; % (yes/no) Compute fitness function in paralle
         
 % RUN MOLTO-IT ALGORITHM
 output = molto_3bp(input)
-
-## Acknowledgment
-
-This code was developed by Nereida Agüera during her Master Thesis. Andrés Marco modified and enhanced part of the code in his Master Thesis. Thnaks also to Mick Wijnen for his contribution. 
