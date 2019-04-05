@@ -187,7 +187,7 @@ save('T_po_SE','T_po_SE')
 
 %% 2.3 SE manifolds
 prnt_out_dt = 0.01;
-npoints = 2;%Number of iterations=npoints*2
+npoints = 1;%Number of iterations=npoints*2
 
 params_SE.mu1 = mu1_SE;
 params_SE.mu2 = mu2_SE;

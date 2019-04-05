@@ -27,71 +27,71 @@ y0=0;    vx0=0;      vz0=0;
 
 for i=1:nmax
     
-% IC vector preparation
-
-% x' = f(x)    IC 
-q0=zeros(1,42); %Initial Conditions
-q0(1)=x0;           q0(4)=vx0;
-q0(2)=y0;           q0(5)=vy0;
-q0(3)=z0;           q0(6)=vz0;
-
-% Phi' = Df(x)*Phi(t,t0)     IC 
-Phi0=eye(6);
-Phi0Vec = MattoVec(Phi0); % Aux vector
-q0(7:42)=Phi0Vec;
-
-
-% Ode45 - State Transition Matrix Computation
-
+    % IC vector preparation
+    
+    % x' = f(x)    IC
+    q0=zeros(1,42); %Initial Conditions
+    q0(1)=x0;           q0(4)=vx0;
+    q0(2)=y0;           q0(5)=vy0;
+    q0(3)=z0;           q0(6)=vz0;
+    
+    % Phi' = Df(x)*Phi(t,t0)     IC
+    Phi0=eye(6);
+    Phi0Vec = MattoVec(Phi0); % Aux vector
+    q0(7:42)=Phi0Vec;
+    
+    
+    % Ode45 - State Transition Matrix Computation
+    
     % Event to stop ode45, x-z plane cross (at T/2)
-Opt = odeset('Events', @EventHalo); 
-
-[t,q]= ode45(@DiffCorrection,[0 tf],q0,Opt);
-
+    Opt = odeset('Events', @EventHalo);
+    
+    [t,q]= ode45(@DiffCorrection,[0 tf],q0,Opt);
+    
     % Extracting solution
-
-xfvec   = q(end,1:6);
-xbfvec  = q(end-1,1:6);
-
-Phifvec = q(end,7:42);
-Phifmat = VectoMat6(Phifvec); % to matrix form
-
+    
+    xfvec   = q(end,1:6);
+    xbfvec  = q(end-1,1:6);
+    
+    Phifvec = q(end,7:42);
+    Phifmat = VectoMat6(Phifvec); % to matrix form
+    
     % Desired values at tf: vxf,vzf = 0   (yf=0 already with stop event)
-  % Desired values             % Final values 
-vxfdes=0;  vzfdes=0;       vxf=xfvec(4);  vzf=xfvec(6);
-
-ydot=xfvec(5); %NEW
-xdotdot= (vxf-xbfvec(4))/(t(end)-t(end-1)); %NEW
-zdotdot= (vzf-xbfvec(6))/(t(end)-t(end-1)); %NEW
-
+    % Desired values             % Final values
+    vxfdes=0;  vzfdes=0;       vxf=xfvec(4);  vzf=xfvec(6);
+    
+    ydot=xfvec(5); %NEW
+    xdotdot= (vxf-xbfvec(4))/(t(end)-t(end-1)); %NEW
+    zdotdot= (vzf-xbfvec(6))/(t(end)-t(end-1)); %NEW
+    
     % Delta x
-dvx=vxfdes-vxf;     dvz=vzfdes-vzf;
-B=[dvx;dvz];
-D=[xdotdot;zdotdot]; %NEW
-E=[Phifmat(2,3) Phifmat(2,5)]; %NEW
-
-% Check of IC
-
-err1 = abs(dvx);      err2 = abs(dvz);
-
-if (err1<=tol) && (err2<=tol)
-    break
-else
+    dvx=vxfdes-vxf;     dvz=vzfdes-vzf;
+    B=[dvx;dvz];
+    D=[xdotdot;zdotdot]; %NEW
+    E=[Phifmat(2,3) Phifmat(2,5)]; %NEW
     
-% Update IC --- Ax=B
-
-    A=zeros(2,2);
-    A(1,1) = Phifmat(4,3);   A(1,2) = Phifmat(4,5);
-    A(2,1) = Phifmat(6,3);   A(2,2) = Phifmat(6,5); 
-    C=A-1/ydot*D*E; %NEW
-    dxvec0=C\B; % Solve inverting A
-    dz0=dxvec0(1);
-    dvy0=dxvec0(2);
+    % Check of IC
     
-    z0  =  z0 + dz0;
-    vy0 = vy0 + dvy0;
-end
-
+    err1 = abs(dvx);      err2 = abs(dvz);
+    
+    if (err1<=tol) && (err2<=tol)
+        break
+    else
+        
+        % Update IC --- Ax=B
+        
+        A=zeros(2,2);
+        A(1,1) = Phifmat(4,3);   A(1,2) = Phifmat(4,5);
+        A(2,1) = Phifmat(6,3);   A(2,2) = Phifmat(6,5);
+        C=A-1/ydot*D*E; %NEW
+        dxvec0=C\B; % Solve inverting A
+        dz0=dxvec0(1);
+        dvy0=dxvec0(2);
+        
+        z0  =  z0 + dz0;
+        vy0 = vy0 + dvy0;
+    end
+    
 end
 %% Solution
 

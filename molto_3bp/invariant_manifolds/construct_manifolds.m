@@ -5,7 +5,7 @@ function [states_s, times_s, SF_s, states_u, times_u, SF_u] = construct_manifold
 T_po = T0;
 idx = round(linspace(1,numel(times_po),npoints));
 et0 = 0;
-eps = 10^-4;
+eps = 10^-7;
 deltat = 5*T_po;%why 5?
 sign = [-1 1];
 
