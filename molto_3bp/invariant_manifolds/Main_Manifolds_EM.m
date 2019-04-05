@@ -20,6 +20,7 @@ clear all;
 close all;
 clc;
 format long
+path2mice = '/Users/davidmorante/Desktop/MicePackage';
 
 %Mice package, Gravitational constants, Earth-Moon, and Sun-Earth constants
 load_variables;

@@ -1,5 +1,4 @@
 %%Load parameters 
-path2mice = './MicePackage/';
 EM = load_spice_kernels(path2mice);
 
 %%INITIAL DATA

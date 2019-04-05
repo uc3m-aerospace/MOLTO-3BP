@@ -3,36 +3,37 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %This code is divided in the following sections:
 
-    %%% 0. Initialize General variables
-    %%% 1. DEFINE STATES TO MATCH MANIFOLDS AT SECTION B
-    %%% 2. EARTH-SCAPE LEG: Insert in SE model
-    %%% 3. MOON-CAPTURE-LEG: Insert in EM model
-    %%% 4. Complete trajectory     
+%%% 0. Initialize General variables
+%%% 1. DEFINE STATES TO MATCH MANIFOLDS AT SECTION B
+%%% 2. EARTH-SCAPE LEG: Insert in SE model
+%%% 3. MOON-CAPTURE-LEG: Insert in EM model
+%%% 4. Complete trajectory
 
 %% 0. Initialize General variables
 close all
 clear all
-clc 
+clc
 %Mice package, Gravitational constants, Earth-Moon, and Sun-Earth constants
+path2mice = '/Users/davidmorante/Desktop/MicePackage';
 load_variables;
-
+%
 %Initial angle formed by x-axis of SE and EM system
 phi_EM_0 = 225*pi/180;
-
-phi_B = 90*pi/180;
+phi_B    = 90*pi/180;
 %Define parameters (input variable to compute manifolds)
-params_EM.mu1 = mu1_EM;
-params_EM.mu2 = mu2_EM;
-params_EM.mu_EM = mu2_EM;
-params_EM.mu_SE = mu2_SE;
-params_EM.L_EM = L_EM;
-params_EM.L_SE = L_SE;
-params_EM.T_EM = T_EM;
-params_EM.T_SE = T_SE;
+params_EM.mu1      = mu1_EM;
+params_EM.mu2      = mu2_EM;
+params_EM.mu_EM    = mu2_EM;
+params_EM.mu_SE    = mu2_SE;
+params_EM.L_EM     = L_EM;
+params_EM.L_SE     = L_SE;
+params_EM.T_EM     = T_EM;
+params_EM.T_SE     = T_SE;
 params_EM.phi_EM_0 = phi_EM_0;
-
+%
 params_SE.mu1 = mu1_SE;
 params_SE.mu2 = mu2_SE;
+%
 %% 1. DEFINE STATES TO MATCH MANIFOLDS AT SECTION B
 
 %1.1 Load states
@@ -53,7 +54,7 @@ ydot_s = SF_s_EM_SE(4,:);
 
 % Match states at Section B: SE unstable with EM stable
 
-idx_SE = find(y_u > 4.2e-3 & y_u < 4.24e-3)
+idx_SE = find(y_u > 4.2e-3 & y_u < 4.24e-3);
 x_u_idx = x_u(idx_SE);
 y_u_idx = y_u(idx_SE);
 xdot_u_idx = xdot_u(idx_SE);
@@ -73,9 +74,9 @@ y0SE = [y_u_idx ;4.14e-3 ;4.145e-3; 4.15e-3;4.14e-3;4.16e-3;4.17e-3;4.18e-3;4.19
 ydot0SE = [(ydot_u_idx*9/10 + ydot_s_idx*1/10);-0.01435; -0.0143;-0.01425;-0.01435;-0.0142;-0.0141;-0.014;-0.0139;-0.0139;-0.0139;-0.0139;-0.0139];
 
 x0_SE = mu1_SE;
-y0_SE = y0SE(1)   %y_u_idx;%(y_u_idx*8/10 + y_s_idx*2/10); %y0_SE = 4.1937e-3; %35350 km from Earth
+y0_SE = y0SE(1);   % %35350 km from Earth
 xdot0_SE = xdot_u_idx;
-ydot0_SE = ydot0SE(1) %(ydot_u_idx*9/10 + ydot_s_idx*1/10);
+ydot0_SE = ydot0SE(1);
 
 S0_SE = [x0_SE; y0_SE; xdot0_SE; ydot0_SE];
 
@@ -90,7 +91,7 @@ load('times_po_SE','times_po_SE')
 
 % Integrate backwards
 time_patch_SE = times_s_EM_SE{idx_EM}(end); %Time at patching point in SE (from Moon capture leg)
-deltat = -4;%%Why -4
+deltat = -4;%
 et0 = time_patch_SE;
 prnt_out_dt = 0.01;
 
@@ -102,12 +103,12 @@ stop_fun = @(et,states_aux)earth_SE_crossing_detection_dec(et,states_aux,params_
 r = sqrt((SF_SE_SE_mid(1)-params_SE.mu1)^2 + SF_SE_SE_mid(2)^2)*L_SE
 rdot = SF_SE_SE_mid(3).*cos(params_SE.phiA_tgt)-SF_SE_SE_mid(4).*sin(120*pi/180)*L_SE/T_SE
 
-% Integrate forward 
+% Integrate forward
 deltat = (times_SE_SE_mid(1)-times_SE_SE_mid(end));
 et0 = etf_SE_SE_mid;
 prnt_out_dt = 0.001;
 
-stop_fun = 'none';%@(et,states_aux)earth_SE_crossing_detection_inc(et,states_aux,params_SE);
+stop_fun = 'none';
 
 [SF_SE_SE_result, etf_SE_SE_result, states_SE_SE_result, times_SE_SE_result] = PCR3BP_propagator (SF_SE_SE_mid, params_SE,...
     et0, deltat, prnt_out_dt, stop_fun);
@@ -128,8 +129,8 @@ load('states_po_EM','states_po_EM')
 load('times_po_EM','times_po_EM')
 
 %Initial Conditions for integration => SO_EM_SE
- %ff = 3.2/8;%3/8;%2.7
- %xdot0_EM_SE = xdot_u_idx*(1-ff) + xdot_s_idx*ff;%(0.6*xdot_s_idx+0.4*xdot_u_idx); %0.5*(xdot_s_idx+xdot_s_idx2);
+%ff = 3.2/8;%3/8;%2.7
+%xdot0_EM_SE = xdot_u_idx*(1-ff) + xdot_s_idx*ff;%(0.6*xdot_s_idx+0.4*xdot_u_idx); %0.5*(xdot_s_idx+xdot_s_idx2);
 xdot0_EM_SE = 0.5*(xdot_s_idx+xdot_u_idx);
 ydot0_EM_SE = ydot0_SE;
 y0_EM_SE = y0_SE;
@@ -152,7 +153,7 @@ stop_fun = @(et,states_aux)Moon_EM_crossing_detection(et,states_aux,params_EM);
 xfEM = SF_EM_EM_result(1);
 ydotfEM = SF_EM_EM_result(4);
 yfEM  = SF_EM_EM_result(2);
-xdotfEM = SF_EM_EM_result(3); 
+xdotfEM = SF_EM_EM_result(3);
 rfEM = sqrt((xfEM-1+mu_EM)^2 + yfEM^2);
 vfEM = sqrt((xdotfEM-yfEM)^2 + (ydotfEM + xfEM + mu_EM-1)^2);
 veEM = sqrt(2*mu_EM/rfEM);
@@ -172,7 +173,7 @@ for jj = 1:size(states_EM_EM_result,2)
 end
 SF_EM_SE_result = EM2SE(SF_EM_EM_result, etf_EM_EM_result, mu_EM, mu_SE, phi_EM_0, L_EM, L_SE, T_EM, T_SE);
 etf_EM_SE_result = etf_EM_EM_result*T_SE/T_EM;
-    
+
 save('states_EM_SE_result','states_EM_SE_result')
 save('times_EM_SE_result','times_EM_SE_result')
 save('SF_EM_SE_result','SF_EM_SE_result')
@@ -199,8 +200,8 @@ save('times_SE_complete','times_SE_complete')
 
 
 plot_complete_trajectory;
-    %Plot in SE
-    %Plot in EM
-    %Plot in inertial Earth centered
-    %Plot in Inertial Moon centered
-        
+
+%Plot in SE
+%Plot in EM
+%Plot in inertial Earth centered
+%Plot in Inertial Moon centered
