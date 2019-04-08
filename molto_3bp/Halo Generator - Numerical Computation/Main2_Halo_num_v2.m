@@ -94,7 +94,7 @@ for i=1:nmax
     
 end
 %% Solution
-
+ 
 disp('--- Halo Generator: Numerical Computation ---')
 fprintf('\n')
 if (err1<=tol) && (err2<=tol)
