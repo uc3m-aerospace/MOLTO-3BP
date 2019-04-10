@@ -2,10 +2,7 @@
 Multi-Objective Low-Thrust Optimizer for Three Body Problem
 [![DOI](https://zenodo.org/badge/169291732.svg)](https://zenodo.org/badge/latestdoi/169291732)
 
-
-
 MOLTO-3BP is a fully automated Matlab tool for the preliminary design of low-thrust trajectories in the restricted three body problem. The software tool applies only for transfers departing from a Earth's circular orbit to a Moon's circular Orbit.
-
 
 ## Installation Guide
 Installation requires simply that you download [MOLTO-3BP](https://github.com/uc3m-aerospace/MOLTO-3BP) and add all the folders and subfolders to your Matlab path.
