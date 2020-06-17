@@ -23,7 +23,7 @@ def molto_3bp(input):
 #
     from nsga_ii.nsga2 import nsga2
     from nsga_ii.nsgaopt import nsgaopt
-    from nsga_ii.fitness_nsga2 import fitness_nsga2
+    from molto_3bp.fitness_nsga2 import fitness_nsga2
     from nsga_ii.initpop import initpop
 #
 # Define constants
@@ -101,7 +101,7 @@ def molto_3bp(input):
 # --> for example, shrink inside [0.5, 1.0] is usually used for local search.
 # A large mutation range (shrink == 0) is require getting out of the local Pareto-optimal fronts
     options['crossoverFraction'] = 0.8  # crossover fraction of variables of an individual ( 2/numVar )
-# -->only crossoverFraction of all variables would do crossover
+# --> only crossoverFraction of all variables would do crossover
     options['mutationFraction']  = 0.3  # only mutaionFraction of all variables would do mutation (default 2/numvar)
     options['objfun']            = fitness_nsga2    # objective function handle
     options['plotInterval']      = 1    # interval between two calls of "plotnsga".
