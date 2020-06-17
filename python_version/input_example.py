@@ -3,6 +3,9 @@
 # The example consists on a transfer from GEO Earth orbit to a Moon orbit
 # (1000 km altitude)
 ###########################################################################
+#
+# Import functions required
+#
 from molto_3bp.molto_3bp import molto_3bp
 # Initial Altitude
 h_i  = 35786                   # [km] Altitude of departure orbit
