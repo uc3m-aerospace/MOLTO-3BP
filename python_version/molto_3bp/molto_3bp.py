@@ -57,8 +57,8 @@ def molto_3bp(input):
 #
 # Set Min/Max Values for the population
 #
-    LB = [0.0, 1.0, 0.0, 1.0]
-    UB = [2*math.pi, math.sqrt(2), 2*math.pi/(om_s), 30.0]
+    LB = [[0.0], [1.0], [0.0], [1.0]]
+    UB = [[2*math.pi, math.sqrt(2), 2*math.pi/(om_s), 30.0]]
 #
 # Set the vartype (=1 Continuos) (=2 Discrete)
 #
