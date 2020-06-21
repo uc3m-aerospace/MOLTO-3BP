@@ -8,10 +8,14 @@ def value_matrix(rows, cols, value):
 #        :return: list of lists that form the matrix
 #    """
     M = []
-    while len(M) < rows:
-        M.append([])
-        while len(M[-1]) < cols:
-            M[-1].append(value)
+    if rows > 1:
+        while len(M) < rows:
+            M.append([])
+            while len(M[-1]) < cols:
+                M[-1].append(value)
+    else:
+        while len(M) < cols:
+            M.append(value)
 
     return M
 
