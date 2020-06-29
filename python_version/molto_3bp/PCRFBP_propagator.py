@@ -37,12 +37,14 @@ def PCRFBP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
 # ---------- SOLVE FOR THE TRAJECTORY WITH AN ODE45 INTEGRATOR ------------
         sol = solve_ivp(derivs, np.linspace(et0, etf, int((etf-et0)/prnt_out_dt)),
             state, events = options['Events'],
+            args = params,
             rtol = options['RelTol'],
             atol = options['AbsTol'],
             max_step = options['MaxStep'])
     else:
         sol = solve_ivp(derivs, np.linspace(et0, etf, int((etf-et0)/prnt_out_dt)),
             state,
+            args = params,
             rtol = options['RelTol'],
             atol = options['AbsTol'],
             max_step = options['MaxStep'])
@@ -54,6 +56,7 @@ def PCRFBP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
         timef = etf
         S0 = states[-1]
         sol = solve_ivp(derivs, np.linspace(time0, timef, 2), S0,
+            args = params,
             rtol = options['RelTol'],
             atol = options['AbsTol'],
             max_step = options['MaxStep'])
