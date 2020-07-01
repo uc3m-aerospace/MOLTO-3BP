@@ -28,10 +28,10 @@ m = int(input("m = "))      # 1 -> Nothern orbit   A_z > 0
                             # 3 -> Southern orbit  A_z < 0
 
 phi = 0                     # rad  <-- Select initial value
-AzDim  = 220e3              # km   <-- Select initial value
+AzDim  = 95e3               # km   <-- Select initial value
 AxDim  = 206e3              # km
 
-t   = np.linspace(0, 100, int(1e4))   # s <-- Propagation time
+t  = np.linspace(0, 100, int(1e4))   # s <-- Propagation time
 
 # # DATA
 
@@ -73,12 +73,16 @@ gamma2 = np.real(root2[np.imag(root2) == 0])
 
 # cn coefficients calculation
 cn1 = lambda n: 1/gamma1**3*(+1**n*mu+(-1)**n*((1-mu)*gamma1**(n+1))/(1-gamma1)**(n+1)) # L1
-cn2 = lambda n: 1/gamma2**3*(-1**n*mu+(-1)**n*((1-mu)*gamma2**(n+1))/(1+gamma2)**(n+1)) # L2
+cn2 = lambda n: 1/gamma2**3*((-1)**n*mu+(-1)**n*((1-mu)*gamma2**(n+1))/(1+gamma2)**(n+1)) # L2
 
 if LP == 1:
     c2 = cn1(2); c3 = cn1(3); c4 = cn1(4) # PROVISIONAL PARA COMPROBAR CON KOON
+    xL = (1-mu)-gamma1 # Position of Lpoint w.r.t m1-m2 center of mass
+    gammaC = gamma1
 elif LP == 2:
     c2 = cn2(2); c3 = cn2(3); c4 = cn2(4) # PROVISIONAL PARA COMPROBAR CON KOON
+    xL = (1-mu)+gamma2
+    gammaC = gamma2
 else:
     raise Exception('Halo Orbits:LPError.\
         The specified value for the LP parameter is outside range: [1, 2]!')
@@ -209,7 +213,8 @@ tau1   = wp*tau+phi
 deltam = 2-m
 
 T      = 2*np.pi/(wp*nu)*Tconversion # Period Calculation (s)
-Tdays  = T/3600/24                # s to days
+Tad    = 2*np.pi/(wp*nu)                # Period Calculation (-)
+Tdays  = T/3600/24                   # s to days
 
 # EoM - 3rd Order Richardson Expansion
 
@@ -220,13 +225,22 @@ yad = kappa*Ax*np.sin(tau1)+\
 zad = deltam*Az*np.cos(tau1)+\
     deltam*d21*Ax*Az*(np.cos(2*tau1)-3)+deltam*(d32*Az*Ax**2-d31*Az**3)*np.cos(3*tau1)
 
-x = xad*L; y = yad*L; z = zad*L
+# Introduce rx = f(xad)   ry = f(yad)   rz = f(zad)
+
+x = xad*gammaC+xL; y = yad*gammaC; z = zad*gammaC # REVISAR
+
+# IC calculation --> For Initial Guess
+
+x0  = x[0];          y0 = y[0];          z0 = z[0]
+dt  = t[1]-t[0]
+vx0 = (x[1]-x0)/dt; vy0 = (y[1]-y0)/dt; vz0 = (z[1]-z0)/dt
 
 # # Plots
 
 fig = plt.figure()
 ax = Axes3D(fig)
 ax.plot(x, y, z)
+ax.plot(xL, 0, 0, 'ro')
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.set_zlabel('z')
@@ -247,12 +261,15 @@ tdim = t*Tconversion
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 ax1.plot(x[tdim<T], y[tdim<T])
 ax1.plot(0,0,'bx')
+ax1.plot(xL,0,'ro')
 ax1.set(xlabel='x', ylabel='y')
 ax2.plot(x[tdim<T], z[tdim<T])
 ax2.plot(0,0,'bx')
+ax2.plot(xL,0,'ro')
 ax2.set(xlabel='x', ylabel='z')
 ax3.plot(y[tdim<T], z[tdim<T])
 ax3.plot(0,0,'bx')
+ax3.plot(0,0,'ro')
 ax3.set(xlabel='y', ylabel='z')
 if m == 1:
     fig.suptitle('Class I  Orbit  (L' + str(LP) +')')
@@ -260,10 +277,12 @@ else:
     fig.suptitle('Class II  Orbit  (L' + str(LP) +')')
 plt.show()
 
+# # Displays
+
 if opt == 1:
-    print('RCTBP: SUN-(EARTH+MOON) SYSTEM')
+    print('\nRCTBP: SUN-(EARTH+MOON) SYSTEM')
 else:
-    print('RCTBP: EARTH-MOON SYSTEM')
+    print('\nRCTBP: EARTH-MOON SYSTEM')
 
 print('-- Results ---')
 print('Ax = ' + str(AxC*L) + ' km;   Az = ' + str(AzDim) + ' km')
@@ -272,3 +291,17 @@ if m == 1:
     print('Case: Northern (L' + str(LP) + ')')
 else:
     print('Case: Southern (L' + str(LP) + ')')
+
+# IC guess display
+print('\n--- Initial Guess Display ---')
+print('x0  = %.20f;' % x0)
+print('y0  = %.20f;' % y0)
+print('z0  = %.20f;' % z0)
+print('vx0  = %.20f;' % vx0)
+print('vy0  = %.20f;' % vy0)
+print('vz0  = %.20f;\n' % vz0)
+
+# Time guesses
+print('--- Time Guess ---')
+print('T  = %.20f;' % Tad)
+print('T/2  = %.20f;' % (Tad/2))
