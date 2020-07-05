@@ -1,9 +1,8 @@
-def DiffCorrection(t, q):
+def ThreeBodyProp(t, q):
 #### State Transition Matrix for CR3BP Computation ####
-
 # This function will solve the following ODEs system
 #                x'  = f(x)                   6x1
-#               Phi' = Df(x)*Phi(t,t0)        6x6
+
     import numpy as np
 
 # Control -> Choice case
@@ -14,16 +13,13 @@ def DiffCorrection(t, q):
 # State vector
 
 # Dyn var
+
     x  = q[0]
     y  = q[1]
     z  = q[2]
     vx = q[3]
     vy = q[4]
     vz = q[5]
-
-# STM (State Transition Matrix)
-    Vec = q[6:] # Aux vector
-    Phi = Vec.reshape((6,-1)) # Matrix initialized and assigned
 
 # Data
 
@@ -50,6 +46,62 @@ def DiffCorrection(t, q):
         + (mu2*y)/((mu1 - x)**2 + y**2 + z**2)**(3/2)
     Uz = (mu1*z)/((mu2 + x)**2 + y**2 + z**2)**(3/2)\
         + (mu2*z)/((mu1 - x)**2 + y**2 + z**2)**(3/2)
+
+## Ode Work
+
+# x' = f(x)
+
+    xdot = vx
+    ydot = vy
+    zdot = vz
+    xdotdot =  2*vy-Ux
+    ydotdot = -2*vx-Uy
+    zdotdot = -Uz
+
+    return [xdot, ydot, zdot, xdotdot, ydotdot, zdotdot]
+
+def DiffCorrection(t, q):
+#### State Transition Matrix for CR3BP Computation ####
+
+# This function will solve the following ODEs system
+#                x'  = f(x)                   6x1
+#               Phi' = Df(x)*Phi(t,t0)        6x6
+    import numpy as np
+
+# Control -> Choice case
+
+    opt = 2   # 1 -> Sun - Earth+Moon System
+              # 2 -> Earth - Moon Syst
+
+    x  = q[0]
+    y  = q[1]
+    z  = q[2]
+
+# Derivative vector preallocation
+    dqdt = np.zeros(len(q))
+
+# Dyn var
+    dqdt[:6] = ThreeBodyProp(t, q[:6])
+
+# STM (State Transition Matrix)
+    Vec = q[6:] # Aux vector
+    Phi = Vec.reshape((6,-1)) # Matrix initialized and assigned
+
+# Data
+
+    mE = 5.9722e24
+    mM = 7.342e22
+    mS = 1.98845114e30
+
+    if opt==1: # Sun-Earth
+        mu = (mE+mM)/(mE+mM+mS)
+    else:
+        mu = 0.012150585609624 # 1.215e-2
+
+    mu1 = 1-mu
+    mu2 = mu
+
+## Matrix Computation
 
 # # Phi' = Df(x)*Phi(t,t0)
 
@@ -104,24 +156,11 @@ def DiffCorrection(t, q):
 
 ## Ode Work
 
-# x' = f(x)
-
-    xdot = vx
-    ydot = vy
-    zdot = vz
-    xdotdot =  2*vy-Ux
-    ydotdot = -2*vx-Uy
-    zdotdot = -Uz
-
 # Phi' = Df(x)*Phi(t,t0)
 
     Phidot = Df@Phi
 
 ## State Vector Derivative
-
-    dqdt = np.zeros(len(q))
-    dqdt[:6] = np.array([xdot, ydot, zdot,
-        xdotdot, ydotdot, zdotdot])
 
     PhidotAux = Phidot.ravel()
 

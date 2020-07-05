@@ -18,7 +18,7 @@ opt = int(input("opt = "))  # 1 -> Sun - Earth+Moon System
 print("Input the Lagrange Point analyzed")
 print("1 -> Lagrange point L1")
 print("2 -> Lagrange point L2")
-LP = int(input("LP = "))  # 1 -> Sun - Earth+Moon System
+LP = int(input("LP = "))    # 1 -> Sun - Earth+Moon System
                             # 2 -> Earth - Moon Syst
 
 print("Input the orientation of the orbit")

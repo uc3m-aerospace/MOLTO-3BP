@@ -36,9 +36,7 @@ for i in range(1, nmax+1):
 
 # x' = f(x)    IC
     q0 = np.zeros(42) # Initial Conditions
-    q0[0] = x0; q0[3]=vx0
-    q0[1] = y0; q0[4]=vy0
-    q0[2] = z0; q0[5]=vz0
+    q0[:6] = [x0, y0, z0, vx0, vy0, vz0]
 
 # Phi' = Df(x)*Phi(t,t0)     IC
     Phi0 = np.identity(6)
