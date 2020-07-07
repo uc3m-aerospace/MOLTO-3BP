@@ -6,8 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-#### 1st approx - Linear equations solution
-
 ### Choice case
 print("Input the option required by the user")
 print("1 -> Sun - Earth+Moon System")
@@ -18,8 +16,8 @@ opt = int(input("opt = "))  # 1 -> Sun - Earth+Moon System
 print("Input the Lagrange Point analyzed")
 print("1 -> Lagrange point L1")
 print("2 -> Lagrange point L2")
-LP = int(input("LP = "))    # 1 -> Sun - Earth+Moon System
-                            # 2 -> Earth - Moon Syst
+LP = int(input("LP = "))    # 1 -> Lagrange point L1
+                            # 2 -> Lagrange point L2
 
 print("Input the orientation of the orbit")
 print("1 -> Nothern orbit   A_z > 0")
@@ -29,9 +27,8 @@ m = int(input("m = "))      # 1 -> Nothern orbit   A_z > 0
 
 phi = 0                     # rad  <-- Select initial value
 AzDim  = 95e3               # km   <-- Select initial value
-AxDim  = 206e3              # km
 
-t  = np.linspace(0, 100, int(1e4))   # s <-- Propagation time
+t  = np.linspace(0, 10, int(1e3))   # s <-- Propagation time
 
 # # DATA
 
@@ -43,14 +40,14 @@ if opt==1:                      # Sun-Earth
     mu = (mE+mM)/(mE+mM+mS)     # Expected value 3.036e-6
 # Normalization relations
 # Intro to Lpoints
-    L       = 1.497610041e6 # 1.845287088696577e+06; # km 1.428571428571428e+06 # REVISAR!!!!!!!!!!!!!!
+    L       = 1.497610041e6 # km
     Ltheory = 1.496e8
-    TSE     = 3.155815e7 # 3.2035e7; # s # REVISAR!!!!!!!!!!!!!!
+    TSE     = 3.155815e7 # s
 elif opt == 2:
-    mu      = 0.012150585609624 # 1.215e-2;
-    L       = 3.84388174e5 # REVISAR!!!!!!!!!!!!!!
+    mu      = mM/(mE+mM)
+    L       = 3.84388174e5
     Ltheory = 3.84388174e5
-    TSE     = 2.361e6 # s # REVISAR!!!!!!!!!!!!!!
+    TSE     = 2.361e6 # s
 else:
     raise Exception('Halo Orbits:OptError.\
         The specified value for the opt parameter is outside range: [1, 2]!')
@@ -76,36 +73,25 @@ cn1 = lambda n: 1/gamma1**3*(+1**n*mu+(-1)**n*((1-mu)*gamma1**(n+1))/(1-gamma1)*
 cn2 = lambda n: 1/gamma2**3*((-1)**n*mu+(-1)**n*((1-mu)*gamma2**(n+1))/(1+gamma2)**(n+1)) # L2
 
 if LP == 1:
-    c2 = cn1(2); c3 = cn1(3); c4 = cn1(4) # PROVISIONAL PARA COMPROBAR CON KOON
+    c2 = cn1(2); c3 = cn1(3); c4 = cn1(4)
     xL = (1-mu)-gamma1 # Position of Lpoint w.r.t m1-m2 center of mass
     gammaC = gamma1
 elif LP == 2:
-    c2 = cn2(2); c3 = cn2(3); c4 = cn2(4) # PROVISIONAL PARA COMPROBAR CON KOON
+    c2 = cn2(2); c3 = cn2(3); c4 = cn2(4)
     xL = (1-mu)+gamma2
     gammaC = gamma2
 else:
     raise Exception('Halo Orbits:LPError.\
         The specified value for the LP parameter is outside range: [1, 2]!')
 
-r1 = Ltheory*((1-mu)-gamma1) # REVISAR!!!!!!!!!!!!
+r1 = Ltheory*((1-mu)-gamma1)
 r2 = Ltheory*((1-mu)+gamma2)
-
-if opt == 1: # Check with Koon results
-    print('---- CHECKs - with Koon ------\n')
-    print('c_2 = %.10f' % c2)
-    print('c_3 = %.10f' % c3)
-    print('c_4 = %.10f\n' % c4)
 
 # Eigenvalues Calculation
 
-# lambda = sqrt((c2+sqrt(9*c2^2-8*c2))/2)
 wp = np.sqrt((2-c2+np.sqrt(9*c2**2-8*c2))/2)
 wv = np.sqrt(c2)
 lmbda = wp # For halo orbits
-
-if opt == 1: # Check with Koon results
-    print('w_p = %.10f' % wp)
-    print('w_v = %.10f\n' % wv)
 
 # Variables - Linear solution
 
@@ -145,30 +131,15 @@ s1 = (2*lmbda*(lmbda*(1+kappa**2)-2*kappa))**-1*\
 s2 = (2*lmbda*(lmbda*(1+kappa**2)-2*kappa))**-1*\
     (3/2*c3*(2*a22*(kappa**2-2)+a24*(kappa**2+2)+2*kappa*b22+5*d21)+3/8*c4*(12-kappa**2))
 
-
 l1    = -3/2*c3*(2*a21+a23+5*d21)-3/8*c4*(12-kappa**2)+2*lmbda**2*s1
 l2    = 3/2*c3*(a24-2*a22)+9/8*c4+2*lmbda**2*s2
 incre = wp**2-wv**2
 
-if opt == 1: # Check with Koon results
-    print('s_1 = %.10f' % s1)
-    print('s_2 = %.10f' % s2)
-    print('l_1 = %.10f' % l1)
-    print('l_2 = %.10f' % s2)
-    print('Increment = %.10f\n' % incre)
-
 # Relationships
 
 # Amplitude Constraint
-
-Ax = AxDim/L; Az = AzDim/L
-AxC = np.sqrt(-(incre+l2*Az**2)/l1) # km
-if AxC == Ax:
-    print('Amplitude Constraint is Satisfied')
-else:
-    print('FAILED Amplitude Constraint!!')
-    print('Reassigning Ax = Axc...')
-    Ax = AxC
+Az = AzDim/L
+Ax = np.sqrt(-(incre+l2*Az**2)/l1) # km
 
 # Phase Angle Relationship
 if m in [1, 3]:
@@ -176,31 +147,6 @@ if m in [1, 3]:
 else:
     raise Exception('Halo Orbits:mError.\
         The specified value for the m parameter is outside range: [1 or 3]!')
-
-# EoM
-
-x = -Ax*np.cos(wp*t+phi)
-y = kappa*Ax*np.sin(wp*t+phi)
-z = Az*np.sin(wv*t+psi)
-
-# # Plots
-
-fig = plt.figure()
-ax = Axes3D(fig)
-ax.plot(x, y, z)
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-ax.set_zlabel('z')
-plt.show()
-
-fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
-ax1.plot(x, y)
-ax1.set(xlabel='x', ylabel='y')
-ax2.plot(x, z)
-ax2.set(xlabel='x', ylabel='z')
-ax3.plot(y, z)
-ax3.set(xlabel='y', ylabel='z')
-plt.show()
 
 # Added variables - Lindstedt-Poncairé Method
 
@@ -213,7 +159,7 @@ tau1   = wp*tau+phi
 deltam = 2-m
 
 T      = 2*np.pi/(wp*nu)*Tconversion # Period Calculation (s)
-Tad    = 2*np.pi/(wp*nu)                # Period Calculation (-)
+Tad    = 2*np.pi/(wp*nu)             # Period Calculation (-)
 Tdays  = T/3600/24                   # s to days
 
 # EoM - 3rd Order Richardson Expansion
@@ -246,15 +192,6 @@ ax.set_ylabel('y')
 ax.set_zlabel('z')
 plt.show()
 
-fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
-ax1.plot(x, y)
-ax1.set(xlabel='x', ylabel='y')
-ax2.plot(x, z)
-ax2.set(xlabel='x', ylabel='z')
-ax3.plot(y, z)
-ax3.set(xlabel='y', ylabel='z')
-plt.show()
-
 # 1 orbit display
 
 tdim = t*Tconversion
@@ -285,7 +222,7 @@ else:
     print('\nRCTBP: EARTH-MOON SYSTEM')
 
 print('-- Results ---')
-print('Ax = ' + str(AxC*L) + ' km;   Az = ' + str(AzDim) + ' km')
+print('Ax = %.1f' % (Ax*L) + ' km;   Az = ' + str(AzDim) + ' km')
 print('T (days) = %.5f' % Tdays)
 if m == 1:
     print('Case: Northern (L' + str(LP) + ')')

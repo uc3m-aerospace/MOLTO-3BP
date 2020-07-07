@@ -26,7 +26,7 @@ vx0 = 0.0001677345614018
 vy0 = 0.20156708661850475
 vz0 = -0.0010217302462787591
 
-# Recall!!! y0,vx0,vz0 = 0 !!!!!
+# Recall y0, vx0, vz0 = 0
 y0 = 0; vx0 = 0; vz0 = 0
 
 ## Differential Correction
