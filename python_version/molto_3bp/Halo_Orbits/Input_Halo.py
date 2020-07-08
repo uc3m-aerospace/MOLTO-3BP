@@ -19,13 +19,18 @@ f3  = True      # Propagator and plotting tool
 flags = [f1, f2, f3]
 
 # Time period of study
-tf     = 4
-nsteps = 1e3
+tf     = 4      # Fix a value close to the expected period of the orbit
+                # in order to improve performance
+nsteps = 1e5
 
 # Case choice
-opt = 1
-LP  = 1
-m   = 1
+opt = 1 # This first one is required for any use of the program
+        # Valid choices: 1 -> Sun - Earth+Moon System
+        #                2 -> Earth - Moon Syst
+LP  = 1 # 1 -> Lagrange point L1
+        # 2 -> Lagrange point L2
+m   = 1 # 1 -> Northern variant of the orbit
+        # 3 -> Southern variant of the orbit
 
 # Initial Orbital parameters
 phi = 0         # rad
@@ -47,6 +52,9 @@ IC  = np.array([x0, z0, vy0])
 
 # If text, then enter the .txt file on the current folder to retrieve the data from
 # The favoured format is:
+# It is accepted to have comments initiated by a # at any section of the text
+# as long as the order of the values is consistent with the one given and no
+# more than one set is given in the same .txt
 # x0 = value # with no word after the values
 # z0 = value
 # vy0 = value

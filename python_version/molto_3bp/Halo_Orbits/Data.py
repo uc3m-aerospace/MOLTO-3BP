@@ -10,7 +10,7 @@ def Data(Data):
         Data['Ltheory'] = 1.496e8
         Data['TSE']     = 3.155815e7 # s
     elif Data['opt'] == 2:
-        Data['mu']      = mM/(mE+mM)
+        Data['mu']      = Data['mM']/(Data['mE']+Data['mM'])
         Data['L']       = 3.84388174e5
         Data['Ltheory'] = 3.84388174e5
         Data['TSE']     = 2.361e6 # s
