@@ -21,7 +21,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from Load_Variables import load_variables
+from IC_statemat import IC_statemat
 from Lagrange import lagrange_points, plot_lagrange_points
+from PCR3BP import PCR3BP_propagator
 
 ## 0. Initialize General variables
 # CSpice package, Gravitational constants, Earth-Moon, and Sun-Earth constants
@@ -37,11 +39,11 @@ params_EM['phi_EM_0'] = 225*np.pi/180
 # (Construct periodic SE orbits function)
 
 ## 1.1 Lagrange Points
-guess_SE = np.array([1.01, 1, -1])
-pos_SE   = lagrange_points(mu_SE, guess_SE) # Returns, x and y coordinates of L points
+guess_SE = np.array([0.9, 1.01, -1])
+pos_SE   = lagrange_points(params_SE['mu2'], guess_SE) # Returns, x and y coordinates of L points
 
 # Plot Lagrange points
-plot_lagrange_points(mu1_SE, mu2_SE, pos_SE, titstring)
+plot_lagrange_points(params_SE['mu1'], params_SE['mu2'], pos_SE)
 # Select L2 point
 Lpoint = 2 # Selection of the user?
 # xe = position in x of L2
@@ -53,10 +55,8 @@ xe = pos_SE[Lpoint, 0]
 # c)Apply a differential correction algorithm
 
 # a)Initial condition state matrix
-mu1   = 1 - mu_SE
-mu2   = mu_SE
-mu    = mu_SE
-mubar = mu*abs(xe-1+mu)**(-3) + (1-mu)*abs(xe+mu)**(-3)
+mubar = params_SE['mu2']*abs(xe-1+params_SE['mu2'])**(-3) +\
+    (1-params_SE['mu2'])*abs(xe+params_SE['mu2'])**(-3)
 a     = 2*mubar + 1
 b     = mubar - 1
 
@@ -65,12 +65,12 @@ Ax = -1e-4   # = x0
 Ax_init = Ax # This values says that the initial position is on the x axis,
              # at distance x0 from the libration point
 
-[x0, y0, vx0, vy0, eigvec, eigval, inv_phi_0] = IC_state_matrix(Ax_init, a, b)
+[x0, y0, vx0, vy0, eigvec, eigval, inv_phi_0] = IC_statemat(Ax_init, a, b)
 
 # These parameters are called by PCR3BP_state_derivs
-params = {'mu1': mu1, 'mu2': mu2, 'a': a, 'b': b}
+params = (params_SE['mu1'], params_SE['mu2'])
 
-## b) PCR3BP propagator: This function propagates the state of a S/C according to the PBRFBP.
+## b) PCR3BP propagator: This function propagates the state of a S/C according to the PBR4BP.
 # The IC are propagated to obtain an estimation of the periodic orbit
 # Running Variables
 prnt_out_dt = 0.1   # print time period
@@ -78,7 +78,7 @@ et0 = 0             # t0: initial time
 deltat = 3.5        # time span: tf = t0 + deltat
 
 # stop_fun can be chosen to stop at the crossing with x or at a certain time.
-# stop_fun = 'none'; # @(et,states_aux)y_axis_crossing_detection(et,states_aux);
+stop_fun = 'None'; # @(et,states_aux)y_axis_crossing_detection(et,states_aux);
 # stop_fun = @(et,states_aux)x_axis_crossing_detection(et,states_aux);
 S0 = np.array([xe+x0, y0, vx0, vy0])
 [SF, etf, states1_IG, times1_IG] = PCR3BP_propagator(S0, params,
