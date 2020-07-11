@@ -35,15 +35,16 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
         options['Events'] = stop_fun
 
 # ---------- SOLVE FOR THE TRAJECTORY WITH AN ODE45 INTEGRATOR ------------
-        sol = solve_ivp(derivs, np.linspace(et0, etf, int((etf-et0)/prnt_out_dt)),
-            state, events = options['Events'],
+        sol = solve_ivp(derivs, (et0, etf),
+            state, t_eval = np.linspace(et0, etf, int((etf-et0)/prnt_out_dt) +1),
+            events = options['Events'],
             args = params,
             rtol = options['RelTol'],
             atol = options['AbsTol'],
             max_step = options['MaxStep'])
     else:
-        sol = solve_ivp(derivs, np.linspace(et0, etf, int((etf-et0)/prnt_out_dt)),
-            state,
+        sol = solve_ivp(derivs, (et0, etf),
+            state, t_eval = np.linspace(et0, etf, int((etf-et0)/prnt_out_dt) +1),
             args = params,
             rtol = options['RelTol'],
             atol = options['AbsTol'],
@@ -51,23 +52,6 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
 
     times  = sol.t
     states = sol.y
-
-# When propagating in time, assure that the final propagation time is
-# included in the simulation
-    if (stop_fun == 'None' and times[-1] < etf):
-        time0 = times[-1]
-        timef = etf
-        S0 = states[:, -1]
-        print(states)
-        sol = solve_ivp(derivs, np.linspace(time0, timef, 2), S0,
-            args = params,
-            rtol = options['RelTol'],
-            atol = options['AbsTol'],
-            max_step = options['MaxStep'])
-        ttt = sol.t
-        sss = sol.y
-        times = np.append(times, ttt[-1])
-        states = np.append(states, sss[:,-1,np.newaxis], axis = 1)
 
 # Update the final S/C state value and ephemeris time
     SF = states[:,-1]
@@ -96,7 +80,7 @@ def PCR3BP_state_derivs (t, state, mu1, mu2):
 
 # Get parameters
     dUbardx = mu2*(mu1 - x) - mu1*(mu2 + x) - (mu2*(mu1 - x))/((mu1 - x)**2 + y**2)**(3/2)\
-        + (mu1*(mu2 + x))/((mu2 + x)**2 + y**2)**(3/2);
+        + (mu1*(mu2 + x))/((mu2 + x)**2 + y**2)**(3/2)
     dUbardy = (mu1*y)/((mu2 + x)**2 + y**2)**(3/2) - mu2*y - mu1*y\
         + (mu2*y)/((mu1 - x)**2 + y**2)**(3/2)
 
@@ -105,5 +89,6 @@ def PCR3BP_state_derivs (t, state, mu1, mu2):
 
 # Velocity derivatives
     derivs[2:] = [2*state[3] - dUbardx, -2*state[2] - dUbardy]
+    print([state[2:], 2*state[3] - dUbardx, -2*state[2] - dUbardy])
 
     return derivs

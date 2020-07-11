@@ -45,7 +45,7 @@ pos_SE   = lagrange_points(params_SE['mu2'], guess_SE) # Returns, x and y coordi
 # Plot Lagrange points
 plot_lagrange_points(params_SE['mu1'], params_SE['mu2'], pos_SE)
 # Select L2 point
-Lpoint = 2 # Selection of the user?
+Lpoint = 1 # Selection of the user?
 # xe = position in x of L2
 xe = pos_SE[Lpoint, 0]
 
@@ -57,6 +57,7 @@ xe = pos_SE[Lpoint, 0]
 # a)Initial condition state matrix
 mubar = params_SE['mu2']*abs(xe-1+params_SE['mu2'])**(-3) +\
     (1-params_SE['mu2'])*abs(xe+params_SE['mu2'])**(-3)
+
 a     = 2*mubar + 1
 b     = mubar - 1
 
@@ -81,6 +82,9 @@ deltat = 3.5        # time span: tf = t0 + deltat
 stop_fun = 'None'; # @(et,states_aux)y_axis_crossing_detection(et,states_aux);
 # stop_fun = @(et,states_aux)x_axis_crossing_detection(et,states_aux);
 S0 = np.array([xe+x0, y0, vx0, vy0])
+if np.imag(S0).all() == 0:
+    S0 = np.real(S0)
+
 [SF, etf, states1_IG, times1_IG] = PCR3BP_propagator(S0, params,
     et0, deltat, prnt_out_dt, stop_fun)
 

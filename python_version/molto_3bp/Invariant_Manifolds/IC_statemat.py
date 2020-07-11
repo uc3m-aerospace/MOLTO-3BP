@@ -5,6 +5,7 @@ def IC_statemat(Ax, a, b):
 
     # Compute state transition matrix
     A = np.array([[0, 0, 1, 0], [0, 0, 0, 1], [a, 0, 0, 2], [0, -b, -2, 0]])
+    
     [eigval, eigvec] = linalg.eig(A)
     Mat = eigvec[0, 2] + eigvec[0, 3]
     x0 = Ax # Initial position in the x axis at a distance x0 from Libration point
