@@ -33,6 +33,7 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
 # Set events function to the input function handle
     if stop_fun != 'None':
         options['Events'] = stop_fun
+        options['Events'].terminal = True
 
 # ---------- SOLVE FOR THE TRAJECTORY WITH AN ODE45 INTEGRATOR ------------
         sol = solve_ivp(derivs, (et0, etf),
@@ -89,6 +90,5 @@ def PCR3BP_state_derivs (t, state, mu1, mu2):
 
 # Velocity derivatives
     derivs[2:] = [2*state[3] - dUbardx, -2*state[2] - dUbardy]
-    print([state[2:], 2*state[3] - dUbardx, -2*state[2] - dUbardy])
 
     return derivs

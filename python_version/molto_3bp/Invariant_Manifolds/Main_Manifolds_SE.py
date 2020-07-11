@@ -24,6 +24,7 @@ from Load_Variables import load_variables
 from IC_statemat import IC_statemat
 from Lagrange import lagrange_points, plot_lagrange_points
 from PCR3BP import PCR3BP_propagator
+from Crossing_Det import x_crossing, y_crossing
 
 ## 0. Initialize General variables
 # CSpice package, Gravitational constants, Earth-Moon, and Sun-Earth constants
@@ -79,8 +80,9 @@ et0 = 0             # t0: initial time
 deltat = 3.5        # time span: tf = t0 + deltat
 
 # stop_fun can be chosen to stop at the crossing with x or at a certain time.
-stop_fun = 'None'; # @(et,states_aux)y_axis_crossing_detection(et,states_aux);
-# stop_fun = @(et,states_aux)x_axis_crossing_detection(et,states_aux);
+stop_fun = 'None'
+# stop_fun = x_crossing
+# stop_fun = y_crossing
 S0 = np.array([xe+x0, y0, vx0, vy0])
 if np.imag(S0).all() == 0:
     S0 = np.real(S0)
@@ -99,6 +101,7 @@ plt.show()
 # Initial conditions
 Ax = Ax_init                                    # Initial position respect L2 in x axis
 S0 = np.array([[xe+x0], [y0], [vx0], [vy0]])    # xe is the position of L2
+
 # Orbital period:
 T0 = T
 
