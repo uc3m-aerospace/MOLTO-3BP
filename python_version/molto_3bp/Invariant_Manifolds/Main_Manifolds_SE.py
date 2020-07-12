@@ -23,8 +23,9 @@ import matplotlib.pyplot as plt
 from Load_Variables import load_variables
 from IC_statemat import IC_statemat
 from Lagrange import lagrange_points, plot_lagrange_points
-from PCR3BP import PCR3BP_propagator
+from PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
 from Crossing_Det import x_crossing, y_crossing
+from Corrector import Corrector
 
 ## 0. Initialize General variables
 # CSpice package, Gravitational constants, Earth-Moon, and Sun-Earth constants
@@ -63,11 +64,11 @@ a     = 2*mubar + 1
 b     = mubar - 1
 
 # Initial position in x axis: distance = x0*L_EM to L2 => Ax
-Ax = -1e-4   # = x0
-Ax_init = Ax # This values says that the initial position is on the x axis,
-             # at distance x0 from the libration point
+Ax = -1e-4  # = x0
+            # This values says that the initial position is on the x axis,
+            # at distance x0 from the libration point
 
-[x0, y0, vx0, vy0, eigvec, eigval, inv_phi_0] = IC_statemat(Ax_init, a, b)
+[x0, y0, vx0, vy0, eigvec, eigval, inv_phi_0] = IC_statemat(Ax, a, b)
 
 # These parameters are called by PCR3BP_state_derivs
 params = (params_SE['mu1'], params_SE['mu2'])
@@ -99,8 +100,9 @@ plt.show()
 
 ## c)Corrector Autonomous: Apply a differential correction algorithm using:
 # Initial conditions
-Ax = Ax_init                                    # Initial position respect L2 in x axis
-S0 = np.array([[xe+x0], [y0], [vx0], [vy0]])    # xe is the position of L2
+# Ax: Initial position respect L2 in x axis
+# xe: Position of L2
+# S0: Inital state vector
 
 # Orbital period:
 T0 = T
@@ -114,7 +116,7 @@ Itmax   = 200
 TolRel  = 1e-10
 TolAbs  = 1e-10
 dh      = 1e-6
-Ind_Fix = 1
+Ind_Fix = 0
 Tol     = 1e-8
 
 dT0     = 0.1
@@ -124,7 +126,8 @@ T0_old  = T
 exit = 0
 
 while abs(Ax) < abs(Ax_tgt) or exit == 0:
-#    [X0, T0, Error, Floquet] = Corrector_Autonomous(@(et,state)PCR3BP_state_derivs (et,state, params),S0,T0,Itmax,Tol,TolRel,TolAbs,dh,Ind_Fix);
+    [X0, T0, Error, Floquet] = Corrector(PCR3BP_state_derivs, S0, params,
+        T0, Itmax, Tol, TolRel, TolAbs, dh, Ind_Fix)
     # X0 are the corrected IC and T0 is the corrected period
     # T0            # Corrected period
     Ax = X0[0]-xe   # Distance to L2 corrected

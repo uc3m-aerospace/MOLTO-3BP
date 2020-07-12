@@ -64,7 +64,7 @@ def PCR3BP_state_derivs (t, state, mu1, mu2):
 # This function computes the acceleration acting at time "et" on
 # the fourth body according to the PBRFBP model.
 # INPUTS:
-#  - et     : Current non-dimensional time [sec]
+#  - t     : Current non-dimensional time [sec]
 #  - state  : Current non-dimensional S/C state in the synodic reference frame
 #             [-,-]
 # OUTPUTS:
