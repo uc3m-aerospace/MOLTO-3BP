@@ -30,8 +30,7 @@ def Corrector(Fun, x0, params, t0, Itmax, Tol, TolRel, TolAbs, dh, Ind_Fix):
             atol = TolAbs)
         t = sol.t; x = sol.y
         error = max(abs(x[:, 0] - x[:, -1]))
-        print('Corrector: iteration = ' + str(i) + '  Error = %.5f' % error)
-
+        print('Corrector: iteration = ' + str(i) + '  Error = %10.5e' % error)
         xvar = np.append(x0, I.reshape(1, -1))
 
         if error < Tol:
@@ -75,14 +74,16 @@ def Corrector(Fun, x0, params, t0, Itmax, Tol, TolRel, TolAbs, dh, Ind_Fix):
                 atol = TolAbs)
             t = sol.t; x = sol.y
             error = max(abs(x[:, 0] - x[:, -1]))
-            print('Corrector: iteration = ' + str(i) + '  Error = %.5f' % error)
+            print('Corrector: iteration = ' + str(i) + '  Error = %10.5e' % error)
+
+    return [x0, t0, error, Floquet]
 
 def variational(t, YV, mu1, mu2, Fun, N, dh):
 
     import numpy as np
     Jac = Jac_num(Fun, t, YV[:N], dh, mu1, mu2)
     YVtemp  = YV[N:].reshape(N, -1, order = 'F')
-    deltadf = (Jac @ YVtemp).reshape(1, -1)[0]
+    deltadf = (Jac @ YVtemp).reshape(1, -1, order = 'F')[0]
     df  = np.append(Fun(t, YV[:N], mu1, mu2), deltadf)
 
     return df
@@ -95,12 +96,12 @@ def Jac_num(function, t, Y, dh, mu1, mu2):
     Jnum = np.zeros((a, a))
 
     for i in range(a):
-        YM = Y
-        Ym = Y
 
+        YM    = np.copy(Y)
         YM[i] = YM[i] + dh/2
         fM    = function(t, YM, mu1, mu2)
 
+        Ym    = np.copy(Y)
         Ym[i] = Ym[i] - dh/2
         fm    = function(t, Ym, mu1, mu2)
 

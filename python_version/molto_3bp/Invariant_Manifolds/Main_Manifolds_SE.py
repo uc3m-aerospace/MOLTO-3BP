@@ -81,8 +81,8 @@ et0 = 0             # t0: initial time
 deltat = 3.5        # time span: tf = t0 + deltat
 
 # stop_fun can be chosen to stop at the crossing with x or at a certain time.
-stop_fun = 'None'
-# stop_fun = x_crossing
+# stop_fun = 'None'
+stop_fun = x_crossing
 # stop_fun = y_crossing
 S0 = np.array([xe+x0, y0, vx0, vy0])
 if np.imag(S0).all() == 0:
