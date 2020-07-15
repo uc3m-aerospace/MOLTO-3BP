@@ -33,7 +33,8 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
 # Set events function to the input function handle
     if stop_fun != 'None':
         options['Events'] = stop_fun
-        options['Events'].terminal = True
+        options['Events'].terminal  = True
+        options['Events'].direction = -state[-1]
 
 # ---------- SOLVE FOR THE TRAJECTORY WITH AN ODE45 INTEGRATOR ------------
         sol = solve_ivp(derivs, (et0, etf),

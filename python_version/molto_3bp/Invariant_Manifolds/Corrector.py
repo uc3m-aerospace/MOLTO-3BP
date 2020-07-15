@@ -34,7 +34,7 @@ def Corrector(Fun, x0, params, t0, Itmax, Tol, TolRel, TolAbs, dh, Ind_Fix):
         xvar = np.append(x0, I.reshape(1, -1))
 
         if error < Tol:
-            if i == 1:
+            if i == 0:
                 sol = solve_ivp(variational, (0, t0), xvar,
                     args = (params[0], params[1], Fun, N, dh),
                     rtol = TolRel,

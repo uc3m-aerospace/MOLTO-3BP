@@ -29,8 +29,10 @@ from Corrector import Corrector
 
 ## 0. Initialize General variables
 # CSpice package, Gravitational constants, Earth-Moon, and Sun-Earth constants
+print('Sun - Earth Manifolds constructor')
 
 # Define parameters (input variable to compute manifolds)
+print('Loading Variables and kernels...')
 [params_EM, params_SE] = load_variables()
 
 # Initial angle formed by x-axis of SE and EM system
@@ -107,7 +109,7 @@ plt.show()
 # Orbital period:
 T0 = T
 
-# Target amplitude (target distance form xe)
+# Target amplitude (target distance from xe)
 Ax_tgt      = 1.4e-4
 Ax_tgt_mid  = Ax_tgt
 
@@ -126,6 +128,9 @@ T0_old  = T
 exit = 0
 
 while abs(Ax) < abs(Ax_tgt) or exit == 0:
+
+    print('Ax = %10.5e' % Ax)
+
     [X0, T0, Error, Floquet] = Corrector(PCR3BP_state_derivs, S0, params,
         T0, Itmax, Tol, TolRel, TolAbs, dh, Ind_Fix)
     # X0 are the corrected IC and T0 is the corrected period
@@ -138,7 +143,7 @@ while abs(Ax) < abs(Ax_tgt) or exit == 0:
         dT0 = dT0/2
         Ax_tgt_mid = 2*Ax_tgt
 
-        if dT0 < 10^-3 or T0 > T0_old*2 or abs(Ax) > abs(Ax_tgt):
+        if dT0 < 1e-3 or T0 > T0_old*2 or abs(Ax) > abs(Ax_tgt):
             exit = 1
 
     [SF, etf, states_po, times_po] = PCR3BP_propagator (X0, params, et0, T0,
@@ -146,11 +151,11 @@ while abs(Ax) < abs(Ax_tgt) or exit == 0:
     X0_old = X0
     T0_old = T0
     SF_old = SF
-
     S0 = SF
     T0 = T0 + dT0
 
-stop_fun = 'none'
+print('Ax = %10.5e' % Ax)
+stop_fun = 'None'
 T_po = T0_old
 prnt_out_dt = 0.01
 [SF, etf, states_po, times_po] = PCR3BP_propagator (X0_old, params, et0, T0_old,
