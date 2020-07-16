@@ -27,18 +27,21 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
 
 # Avoid errors when the print out step has been set higher than the
 # propagation duration
-    if (prnt_out_dt > etf-et0):
+    if (prnt_out_dt > abs(etf-et0)):
         prnt_out_dt = etf-et0
 
 # Set events function to the input function handle
     if stop_fun != 'None':
         options['Events'] = stop_fun
-        options['Events'].terminal  = True
-        options['Events'].direction = -state[-1]
-
+        try:
+            if stop_fun.x:
+                options['Events'].terminal  = True
+                options['Events'].direction = -state[-1]
+        except:
+            options['Events'].terminal  = True
 # ---------- SOLVE FOR THE TRAJECTORY WITH AN ODE45 INTEGRATOR ------------
         sol = solve_ivp(derivs, (et0, etf),
-            state, t_eval = np.linspace(et0, etf, int((etf-et0)/prnt_out_dt) +1),
+            state, t_eval = np.linspace(et0, etf, int(abs((etf-et0)/prnt_out_dt)) +1),
             events = options['Events'],
             args = params,
             rtol = options['RelTol'],
@@ -46,7 +49,7 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
             max_step = options['MaxStep'])
     else:
         sol = solve_ivp(derivs, (et0, etf),
-            state, t_eval = np.linspace(et0, etf, int((etf-et0)/prnt_out_dt) +1),
+            state, t_eval = np.linspace(et0, etf, int(abs((etf-et0)/prnt_out_dt)) +1),
             args = params,
             rtol = options['RelTol'],
             atol = options['AbsTol'],

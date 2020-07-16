@@ -24,8 +24,9 @@ from Load_Variables import load_variables
 from IC_statemat import IC_statemat
 from Lagrange import lagrange_points, plot_lagrange_points
 from PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
-from Crossing_Det import x_crossing, y_crossing
+from Crossing_Det import x_crossing, y_crossing, earth_SE_crossing
 from Corrector import Corrector
+from Manifolds_tools import construct, plot
 
 ## 0. Initialize General variables
 # CSpice package, Gravitational constants, Earth-Moon, and Sun-Earth constants
@@ -85,6 +86,7 @@ deltat = 3.5        # time span: tf = t0 + deltat
 # stop_fun can be chosen to stop at the crossing with x or at a certain time.
 # stop_fun = 'None'
 stop_fun = x_crossing
+stop_fun.x = True
 # stop_fun = y_crossing
 S0 = np.array([xe+x0, y0, vx0, vy0])
 if np.imag(S0).all() == 0:
@@ -184,16 +186,13 @@ inv_phi_0_SE = inv_phi_0
 # save('T_po_SE','T_po_SE')
 
 ## 1.3 SE manifolds
-prnt_out_dt = 0.01
 npoints = 1 # Number of iterations = npoints*2
 
-params_SE['mu1'] = mu1_SE
-params_SE['mu2'] = mu2_SE
+stop_fun_SE = earth_SE_crossing
 
-# stop_fun_SE = @(et,states_aux)earth_SE_crossing_detection(et,states_aux,params_SE);
-[states_s_SE, times_s_SE, SF_s_SE, states_u_SE, times_u_SE,SF_u_SE] = construct_manifolds(params_SE,
-    T_po_SE, states_po_SE, times_po_SE, eigvec_SE, eigval_SE, inv_phi_0_SE,
-    prnt_out_dt, npoints, stop_fun_SE)
+[states_s_SE, times_s_SE, SF_s_SE, states_u_SE, times_u_SE, SF_u_SE] = construct(
+    params, T_po_SE, states_po_SE, times_po_SE, eigvec_SE, eigval_SE,
+    inv_phi_0_SE, prnt_out_dt, npoints, stop_fun_SE)
 
 # save(strcat(['states_s_SE_phi0_' num2str(phi_EM_0*180/pi)]),'states_s_SE')
 # save(strcat(['states_u_SE_phi0_' num2str(phi_EM_0*180/pi)]),'states_u_SE')
@@ -202,4 +201,5 @@ params_SE['mu2'] = mu2_SE
 # save(strcat(['SF_s_SE_phi0_' num2str(phi_EM_0*180/pi)]),'SF_s_SE')
 # save(strcat(['SF_u_SE_phi0_' num2str(phi_EM_0*180/pi)]),'SF_u_SE')
 
-plot_Manifolds(mu1_SE,mu2_SE,pos_SE,states_po_SE, states_s_SE,SF_s_SE,states_u_SE,titstring)
+plot(params_SE['mu1'], params_SE['mu2'], pos_SE, states_po_SE, states_s_SE,
+    SF_s_SE, states_u_SE)
