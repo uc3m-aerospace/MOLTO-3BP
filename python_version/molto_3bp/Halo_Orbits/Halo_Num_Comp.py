@@ -14,6 +14,7 @@ def Halo_Num_Comp(Data):
 
     #--- Initial Guess ---
     if Data['flags'][0] or Data['method'] == 'insitu':
+        print(Data['IC'])
         [x0, z0, vy0] = Data['IC']
     else:
         fid  = open(Data['IC'],'r')

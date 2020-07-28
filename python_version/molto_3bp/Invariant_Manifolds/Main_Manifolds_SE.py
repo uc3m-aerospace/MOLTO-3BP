@@ -126,7 +126,6 @@ Tol     = 1e-8
 dT0     = 0.1
 T0_old  = T
 
-# stop_fun = @(et,states_aux)x_axis_crossing_detection(et,states_aux)
 exit = 0
 
 while abs(Ax) < abs(Ax_tgt) or exit == 0:

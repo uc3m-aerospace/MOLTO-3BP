@@ -13,7 +13,7 @@ from Halo_Main import Halo_Main
 # Accepted values: True (same as any number) or False (same as 0)
 # Any arrangment of values is valid but the program will ask the user for
 # a source to find the data that the previous sections would have produced
-f1  = True      # Initial guess generator from 3rd Order Richardson Expansion
+f1  = False      # Initial guess generator from 3rd Order Richardson Expansion
 f2  = True      # Differential Correction module to refine Initial guess
 f3  = True      # Propagator and plotting tool
 flags = [f1, f2, f3]
@@ -45,9 +45,9 @@ tol  = 1e-15
 method = 'insitu'       # Valid values: insitu / text
 
 # If in situ, then enter manually on this section
-x0  = 1.1124550077766104
-z0  = 0.035680331960522345
-vy0 = 0.20156708661850475 # Recall y0 = vx0 = vz0 = 0 for a valid Halo
+x0  = 0.98883562973961558473
+z0  = 0.00070003539306020212
+vy0 = 0.00891271945118244681 # Recall y0 = vx0 = vz0 = 0 for a valid Halo
 IC  = np.array([x0, z0, vy0])
 
 # If text, then enter the .txt file on the current folder to retrieve the data from
@@ -59,7 +59,7 @@ IC  = np.array([x0, z0, vy0])
 # z0 = value
 # vy0 = value
 # although a full set of 6 ICs will be accepted and processed
-IC = 'sample.txt'
+# IC = 'sample.txt' # Uncomment this line to enable text
 
 # Combining all input data into a single data structure
 Input = {'flags': flags, 'tf': tf, 'nsteps': nsteps, 'opt': opt, 'LP': LP,

@@ -48,7 +48,7 @@ def Halo_Plot(Data):
     ax.set_zlabel('z')
     plt.show()
 
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, constrained_layout = True)
     ax1.plot(x, y)
     ax1.set(xlabel='x', ylabel='y')
     ax2.plot(x, z)
