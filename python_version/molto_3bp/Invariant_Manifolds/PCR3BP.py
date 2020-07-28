@@ -19,7 +19,7 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
 
 # # Options of the Runge Kutta solver
 # # Maximum integration time step is 1/50 of the orbital period
-    max_step = 1e4
+    max_step = 1e-4
 
 # Additional exit condition of the Cowell's propagator (if it is reached
 # before the final propagation time)
@@ -35,10 +35,10 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
         options['Events'] = stop_fun
         try:
             if stop_fun.x:
-                options['Events'].terminal  = True
                 options['Events'].direction = -state[-1]
         except:
-            options['Events'].terminal  = True
+            pass
+        options['Events'].terminal = True
 # ---------- SOLVE FOR THE TRAJECTORY WITH AN ODE45 INTEGRATOR ------------
         sol = solve_ivp(derivs, (et0, etf),
             state, t_eval = np.linspace(et0, etf, int(abs((etf-et0)/prnt_out_dt)) +1),
@@ -47,6 +47,9 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
             rtol = options['RelTol'],
             atol = options['AbsTol'],
             max_step = options['MaxStep'])
+
+        times  = np.append(sol.t[:], sol.t_events[0][:], axis = 0)
+        states = np.append(sol.y[:], sol.y_events[0][0][:, np.newaxis], axis = 1)
     else:
         sol = solve_ivp(derivs, (et0, etf),
             state, t_eval = np.linspace(et0, etf, int(abs((etf-et0)/prnt_out_dt)) +1),
@@ -55,8 +58,9 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
             atol = options['AbsTol'],
             max_step = options['MaxStep'])
 
-    times  = sol.t
-    states = sol.y
+        times  = sol.t
+        states = sol.y
+
 
 # Update the final S/C state value and ephemeris time
     SF = states[:,-1]

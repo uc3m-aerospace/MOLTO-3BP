@@ -10,7 +10,7 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
 
     ## Step 4: Computation of invariant manifolds
     T_po = T0
-    idx  = np.linspace(0, len(times_po), npoints, dtype = int)
+    idx  = np.linspace(0, len(times_po), npoints, endpoint = False, dtype = int)
     et0  = 0
     eps  = 1e-7
     deltat = 5*T_po
@@ -59,8 +59,10 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
 
     return [states_s, times_s, SF_s, states_u, times_u, SF_u]
 
-def plot(mu1, mu2, pos, states_po, states_s, SF_s, states_u):
+def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u):
+
     import matplotlib.pyplot as plt
+    import numpy as np
 
     plt.plot(mu1, 0, 'ko')
     plt.plot(pos[1, 0], pos[1, 1], 'ko')
@@ -74,6 +76,7 @@ def plot(mu1, mu2, pos, states_po, states_s, SF_s, states_u):
     plt.plot(mu1, 0 , 'ro')
     plt.plot(pos[1, 0], pos[1, 1], 'ko')
     plt.plot(states_po[0], states_po[1], 'k')
+    plt.plot(np.array([mu1-2.5e-3, mu1]), np.zeros(2), 'g--')
     plt.show()
 
     # plt.plot(-mu2, 0 , 'bo')
@@ -81,5 +84,6 @@ def plot(mu1, mu2, pos, states_po, states_s, SF_s, states_u):
     plt.plot(pos[:2, 0], pos[:2, 1], 'ko')
     plt.show()
 
-    plt.plot(SF_s[0], SF_s[1], 'o')
+    for j in SF_s:
+        plt.plot(j[1], j[3], 'o')
     plt.show()

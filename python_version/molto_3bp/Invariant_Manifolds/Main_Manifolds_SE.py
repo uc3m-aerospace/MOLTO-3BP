@@ -26,7 +26,7 @@ from Lagrange import lagrange_points, plot_lagrange_points
 from PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
 from Crossing_Det import x_crossing, y_crossing, earth_SE_crossing
 from Corrector import Corrector
-from Manifolds_tools import construct, plot
+from Manifolds_tools import construct, plotm
 
 ## 0. Initialize General variables
 # CSpice package, Gravitational constants, Earth-Moon, and Sun-Earth constants
@@ -68,7 +68,7 @@ b     = mubar - 1
 
 # Initial position in x axis: distance = x0*L_EM to L2 => Ax
 Ax = -1e-4  # = x0
-            # This values says that the initial position is on the x axis,
+            # This value says that the initial position is on the x axis,
             # at distance x0 from the libration point
 
 [x0, y0, vx0, vy0, eigvec, eigval, inv_phi_0] = IC_statemat(Ax, a, b)
@@ -186,7 +186,7 @@ inv_phi_0_SE = inv_phi_0
 # save('T_po_SE','T_po_SE')
 
 ## 1.3 SE manifolds
-npoints = 1 # Number of iterations = npoints*2
+npoints = 6 # Number of iterations = npoints*2
 
 stop_fun_SE = earth_SE_crossing
 
@@ -201,5 +201,5 @@ stop_fun_SE = earth_SE_crossing
 # save(strcat(['SF_s_SE_phi0_' num2str(phi_EM_0*180/pi)]),'SF_s_SE')
 # save(strcat(['SF_u_SE_phi0_' num2str(phi_EM_0*180/pi)]),'SF_u_SE')
 
-plot(params_SE['mu1'], params_SE['mu2'], pos_SE, states_po_SE, states_s_SE,
+plotm(params_SE['mu1'], params_SE['mu2'], pos_SE, states_po_SE, states_s_SE,
     SF_s_SE, states_u_SE)
