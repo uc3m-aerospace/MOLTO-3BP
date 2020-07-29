@@ -188,7 +188,7 @@ def Main_Manifolds_SE(Data):
                         states_po = np.append(states_po, temp[:, np.newaxis],
                             axis = 1)
             fid.close()
-            times_po = np.linspace(et0, deltat, int(deltat/prnt_out_dt) +1)
+            times_po = np.linspace(et0, T_po, int(T_po/prnt_out_dt) +1)
 
 
 

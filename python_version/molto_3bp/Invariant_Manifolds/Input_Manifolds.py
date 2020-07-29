@@ -12,8 +12,8 @@ from Main_Manifolds_SE import Main_Manifolds_SE
 # Accepted values: True (same as any number) or False (same as 0)
 # Any arrangment of values is valid but the program will ask the user for
 # a source to find the data that the previous sections would have produced
-f1  = True        # Initial guess generator and differential corrector
-f2  = False       # Manifolds constructor and plotting tool
+f1  = 0        # Initial guess generator and differential corrector
+f2  = 1        # Manifolds constructor and plotting tool
 flags = [f1, f2]
 
 # Case choice

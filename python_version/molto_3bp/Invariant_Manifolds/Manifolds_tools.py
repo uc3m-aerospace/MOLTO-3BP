@@ -85,5 +85,6 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u):
     plt.show()
 
     for j in SF_s:
-        plt.plot(j[1], j[3], 'o')
+        if j[1] < 1e-2:
+            plt.plot(j[1], j[3], 'o')
     plt.show()
