@@ -17,13 +17,11 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
 # Function that computes the state derivatives
     derivs = PCR3BP_state_derivs
 
-# # Options of the Runge Kutta solver
 # # Maximum integration time step is 1/50 of the orbital period
     max_step = 1e-3
 
-# Additional exit condition of the Cowell's propagator (if it is reached
-# before the final propagation time)
-    options = {'RelTol' : 1e-12, 'AbsTol' : 1e-15, 'MaxStep' : max_step}
+# # Options of the Runge Kutta solver
+    options = {'RelTol' : 5e-14, 'AbsTol' : 1e-30, 'MaxStep' : max_step}
 
 # Avoid errors when the print out step has been set higher than the
 # propagation duration
