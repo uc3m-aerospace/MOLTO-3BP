@@ -122,12 +122,12 @@ def Manifolds(Data):
 
         # Target amplitude (target distance from xe)
         Ax_tgt      = Data['Ax_tgt']
-        Ax_tgt_mid  = Ax_tgt
+        Ax_tgt_mid  = np.copy(Ax_tgt)
 
         # Tolerances for convergence
         Itmax   = 200
         TolRel  = 1e-10
-        TolAbs  = 1e-10
+        TolAbs  = 1e-11
         dh      = 1e-6
         Ind_Fix = 0
         Tol     = 1e-8
@@ -135,11 +135,12 @@ def Manifolds(Data):
         dT0     = 0.1
         T0_old  = T
 
-        exit = 0
+        stop_fun.x = False
+        stop_fun.direction = 0
 
-        while abs(Ax) < abs(Ax_tgt) or exit == 0:
+        while abs(Ax) < abs(Ax_tgt):
 
-            print('Ax = %10.5e' % Ax)
+            print('Ax = %10.5e & Ax target = %10.5e' % (abs(Ax), abs(Ax_tgt)))
 
             [X0, T0, Error, Floquet] = Corrector(PCR3BP_state_derivs, S0, params,
                 T0, Itmax, Tol, TolRel, TolAbs, dh, Ind_Fix)
@@ -155,13 +156,10 @@ def Manifolds(Data):
                 Ax_tgt_mid = 2*Ax_tgt
 
                 if dT0 < 1e-3 or T0 > T0_old*2 or abs(Ax) > abs(Ax_tgt):
-                    exit = 1
+                    break
 
             [SF, etf, states_po, times_po] = PCR3BP_propagator (X0, params, et0, T0,
-                prnt_out_dt, stop_fun)
-
-            [SF, etf, states_po, times_po] = PCR3BP_propagator (SF, params, etf, 2*T0,
-                prnt_out_dt, stop_fun)
+                prnt_out_dt*10, stop_fun)
 
             X0_old = X0
             T0_old = T0

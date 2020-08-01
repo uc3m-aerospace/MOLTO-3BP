@@ -11,8 +11,8 @@ def IC_statemat(Ax, a, b):
     x0 = Ax # Initial position in the x axis at a distance x0 from Libration point
     y0 = 0
 
-    vx0 = x0/Mat*eigvec[2,2] + x0/Mat*eigvec[2,3]
-    vy0 = x0/Mat*eigvec[3,2] + x0/Mat*eigvec[3,3]
+    vx0 = x0/Mat*(eigvec[2,2] + eigvec[2,3])
+    vy0 = x0/Mat*(eigvec[3,2] + eigvec[3,3])
 
     inv_phi_0 = linalg.inv(eigvec)
 
