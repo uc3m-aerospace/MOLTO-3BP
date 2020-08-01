@@ -18,11 +18,11 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
 
     # Matrix initialization
     states_u = []
-    SF_u     = []
+    SF_u     = np.array([])
     times_u  = []
     states_s = []
+    SF_s     = np.array([])
     times_s  = []
-    SF_s     = []
 
     for i in range(npoints):
         for j in range(len(sign)):
@@ -45,7 +45,7 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
 
             states_u.append(states)
             times_u.append(times)
-            SF_u.append(SF)
+            SF_u = np.append([SF_u], [SF])
 
             # Integrate stable manifold backwards in time
             [SF, etf, states, times] =  PCR3BP_propagator(Xs, params, et0, -deltat,
@@ -53,13 +53,13 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
 
             states_s.append(states)
             times_s.append(times)
-            SF_s.append(SF)
+            SF_s = np.append([SF_s], [SF])
 
             print('Iteration: ' + str(2*i + j))
 
-    return [states_s, times_s, SF_s, states_u, times_u, SF_u]
+    return [states_s, times_s, SF_s.reshape(-1, 4), states_u, times_u, SF_u.reshape(-1, 4)]
 
-def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u):
+def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u):
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -84,7 +84,9 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u):
     plt.plot(pos[:2, 0], pos[:2, 1], 'ko')
     plt.show()
 
-    for j in SF_s:
-        if j[1] < 1e-2:
-            plt.plot(j[1], j[3], 'o')
+    for j in range(len(SF_s)):
+        if SF_s[j, 1] < 1e-2:
+            plt.plot(SF_s[j, 0], SF_s[j, 3], 'bo')
+        if SF_u[j, 1] > -1e-2:
+            plt.plot(SF_u[j, 0], SF_u[j, 3], 'ro')
     plt.show()

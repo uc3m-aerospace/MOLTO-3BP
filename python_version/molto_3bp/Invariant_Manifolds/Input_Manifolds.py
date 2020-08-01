@@ -12,7 +12,7 @@ from Manifolds import Manifolds
 # Accepted values: 'SE', 'EM', 'ALL'
 # In 'ALL' mode the program will set both flags to True since in order to
 # compose the mission it is necessary to build both manifolds and join them
-f = 'SE'
+f = 'EM'
 
 # Specific Functionalities required by user
 # Accepted values: True (same as any number) or False (same as 0)
@@ -23,13 +23,13 @@ f2  = 1        # Manifolds constructor and plotting tool
 flags = [f1, f2]
 
 # Case choice
-Ax_tgt  = 1e-3
+Ax_tgt  = 2e-2
 
 LP      = 2 # 1 -> Lagrange point L1
             # 2 -> Lagrange point L2
 
 # Numerical parameters
-npoints = 2          # Number of sections of the orbit to propagate manifolds
+npoints = 10         # Number of sections of the orbit to propagate manifolds
 
 prnt_out_dt = 0.01   # print time period
 

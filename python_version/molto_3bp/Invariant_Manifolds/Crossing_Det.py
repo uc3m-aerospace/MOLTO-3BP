@@ -25,7 +25,7 @@ def EM_crossing(et, state, mu1, mu2):
 
     tol = 4e-5
 
-    if abs(x - mu1) < 5e-2 and (x - mu1) < 0:
+    if abs(x - mu1) < 1e-1 and (x - mu1) < 0:
         check = float(abs(y) > tol)
     elif abs(y) > 0.08:
         check = 0

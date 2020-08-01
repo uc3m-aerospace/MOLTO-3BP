@@ -127,7 +127,7 @@ def Manifolds(Data):
         # Tolerances for convergence
         Itmax   = 200
         TolRel  = 1e-10
-        TolAbs  = 1e-11
+        TolAbs  = 5e-11
         dh      = 1e-6
         Ind_Fix = 0
         Tol     = 1e-8
@@ -222,4 +222,4 @@ def Manifolds(Data):
 
         ## 1.4 Plot manifolds
         plotm(params_SE['mu1'], params_SE['mu2'], pos, states_po, states_s,
-            SF_s, states_u)
+            SF_s, states_u, SF_u)
