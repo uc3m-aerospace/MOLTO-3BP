@@ -31,13 +31,13 @@ def plot_lagrange_points(mu1, mu2, pos):
     plt.plot(pos[2, 0], pos[2, 1], 'bo')
     plt.plot(pos[3, 0], pos[3, 1], 'ro')
     plt.plot(pos[4, 0], pos[4, 1], 'ro')
-    plt.plot([-mu2, pos[3, 0]], [0, pos[3, 1]], '--')
-    plt.plot([pos[3, 0], mu1], [pos[3, 1], 0], '--')
-    plt.plot([-mu2, pos[4, 0]], [0, pos[4, 1]], '--')
-    plt.plot([pos[4, 0], mu1], [pos[4, 1], 0], '--')
+    plt.plot([-mu2, pos[3, 0]], [0, pos[3, 1]], 'g--')
+    plt.plot([pos[3, 0], mu1], [pos[3, 1], 0], 'g--')
+    plt.plot([-mu2, pos[4, 0]], [0, pos[4, 1]], 'g--')
+    plt.plot([pos[4, 0], mu1], [pos[4, 1], 0], 'g--')
 
     moon_orbit = circle(-mu2, 0, 1)
-    plt.plot(moon_orbit[:, 0], moon_orbit[:, 1], '--')
+    plt.plot(moon_orbit[:, 0], moon_orbit[:, 1], 'k--')
     plt.show()
 
 def circle(x, y, r):
