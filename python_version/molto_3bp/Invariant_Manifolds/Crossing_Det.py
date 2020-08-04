@@ -4,32 +4,27 @@ def x_crossing(et, state, mu1, mu2):
 def y_crossing(et, state, mu1, mu2):
     return state[0]
 
-def SE_crossing(et, state, mu1, mu2):
+def poinc_crossing(et, state, mu1, mu2, ang, L):
+
+    import numpy as np
 
     [x, y] = state[:2]
 
-    tol = 1e-5
+    d = abs((L - mu1)*np.sin(ang*np.pi/180)*x\
+        - (L - mu1)*np.cos(ang*np.pi/180)*y\
+        - (L - mu1)*np.sin(ang*np.pi/180)*mu1)\
+        /(np.sqrt(((L - mu1)*np.sin(ang*np.pi/180))**2\
+        + ((L - mu1)*np.cos(ang*np.pi/180))**2))
 
-    if abs(x - mu1) < 1e-2 and (x - mu1) < 0:
-        check = float(abs(y) > tol)
-    elif abs(y) > 0.01:
-        check = 0
+    if np.log10(mu2) < -5:
+        tol = 1e-5
     else:
-        check = 1
+        tol = 5e-4
 
-    return check
-
-def EM_crossing(et, state, mu1, mu2):
-
-    [x, y] = state[:2]
-
-    tol = 4e-5
-
-    if abs(x - mu1) < 1e-1 and (x - mu1) < 0:
-        check = float(abs(y) > tol)
-    elif abs(y) > 0.08:
-        check = 0
+    if d < tol and np.sign(np.cos(ang*np.pi/180)) == np.sign(x-mu1) and\
+        np.sign(np.sin(ang*np.pi/180)) == np.sign(y):
+        return 0
+    elif abs(y) > (L-mu1):
+        return 0
     else:
-        check = 1
-
-    return check
+        return 1

@@ -1,5 +1,5 @@
 def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
-    prnt_out_dt, npoints, stop_fun):
+    prnt_out_dt, npoints, stop_fun, ang, L):
 
     #
     # Import required functions
@@ -40,26 +40,26 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
             Xs = np.real(states_po[:, idx[i]] + eps*sign[j]*Ys)
 
             # Integrate unstable manifold forwards in time
-            [SF, etf_u, states, times] = PCR3BP_propagator(Xu, params, et0, deltat,
-                prnt_out_dt, stop_fun)
+            [SF, etf_u, states, times] = PCR3BP_propagator(Xu, et0, deltat,
+                prnt_out_dt, stop_fun, params[0], params[1], ang, L)
 
             states_u.append(states)
             times_u.append(times)
             SF_u = np.append([SF_u], [SF])
 
             # Integrate stable manifold backwards in time
-            [SF, etf, states, times] =  PCR3BP_propagator(Xs, params, et0, -deltat,
-                prnt_out_dt, stop_fun)
+            [SF, etf, states, times] =  PCR3BP_propagator(Xs, et0, -deltat,
+                prnt_out_dt, stop_fun, params[0], params[1], ang, L)
 
             states_s.append(states)
             times_s.append(times)
             SF_s = np.append([SF_s], [SF])
 
-            print('Iteration: ' + str(2*i + j))
+            print('Iteration: ' + str(2*i + j +1))
 
     return [states_s, times_s, SF_s.reshape(-1, 4), states_u, times_u, SF_u.reshape(-1, 4)]
 
-def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u):
+def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang):
 
     import matplotlib.pyplot as plt
     import numpy as np
@@ -67,26 +67,38 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u):
     plt.plot(mu1, 0, 'ko')
     plt.plot(pos[1, 0], pos[1, 1], 'ko')
     plt.plot(states_po[0], states_po[1], 'k')
+    rmax = (states_po[0] - pos[1, 0])**2 + (states_po[1] - pos[1, 1])**2\
+        == max((states_po[0] - pos[1, 0])**2 + (states_po[1] - pos[1, 1])**2)
+    tol  = 5e-3
+    plt.plot([mu1, pos[1, 0]], [0, pos[1,0]*(states_po[1][rmax][0] - tol)\
+        /(states_po[0][rmax][0] - tol)], 'g--')
+    plt.plot([mu1, pos[1, 0]], [0, -pos[1,0]*(states_po[1][rmax][0] - tol)\
+        /(states_po[0][rmax][0] - tol)], 'g--')
+    plt.plot([mu1, mu1 + (pos[1, 0] - mu1)*np.cos(ang*np.pi/180)],
+        [0, (pos[1, 0] - mu1)*np.sin(ang*np.pi/180)], 'r--')
     plt.show()
 
     for i in range(len(states_u)):
         plt.plot(states_u[i][0], states_u[i][1], 'r')
         plt.plot(states_s[i][0], states_s[i][1], 'b')
-    # plt.plot(-mu2, 0 , 'bo')
     plt.plot(mu1, 0 , 'ro')
     plt.plot(pos[1, 0], pos[1, 1], 'ko')
     plt.plot(states_po[0], states_po[1], 'k')
-    plt.plot(np.array([mu1-2.5e-3, mu1]), np.zeros(2), 'g--')
+    plt.plot([mu1, mu1 + (pos[1, 0] - mu1)*np.cos(ang*np.pi/180)],
+        [0, (pos[1, 0] - mu1)*np.sin(ang*np.pi/180)], 'y--')
     plt.show()
 
-    # plt.plot(-mu2, 0 , 'bo')
     plt.plot(mu1, 0 , 'ro')
     plt.plot(pos[:2, 0], pos[:2, 1], 'ko')
     plt.show()
 
     for j in range(len(SF_s)):
-        if SF_s[j, 1] < 1e-2:
-            plt.plot(SF_s[j, 0], SF_s[j, 3], 'bo')
-        if SF_u[j, 1] > -1e-2:
-            plt.plot(SF_u[j, 0], SF_u[j, 3], 'ro')
+        if SF_s[j, 1] < (pos[1, 0]-mu1):
+            plt.plot(np.sqrt((SF_s[j, 0] - mu1)**2 + SF_s[j, 1]**2),
+                np.sin(ang*np.pi/180)*SF_s[j, 2] + np.cos(ang*np.pi/180)*SF_s[j, 3],
+                'bo')
+        if SF_u[j, 1] > -(pos[1, 0]-mu1):
+            plt.plot(np.sqrt((SF_u[j, 0] - mu1)**2 + SF_u[j, 1]**2),
+                np.sin(ang*np.pi/180)*SF_u[j, 2] + np.cos(ang*np.pi/180)*SF_u[j, 3],
+                'ro')
     plt.show()

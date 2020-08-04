@@ -27,7 +27,7 @@ def Manifolds(Data):
     from IC_statemat import IC_statemat
     from Lagrange import lagrange_points, plot_lagrange_points
     from PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
-    from Crossing_Det import x_crossing, y_crossing, SE_crossing, EM_crossing
+    from Crossing_Det import x_crossing, y_crossing, poinc_crossing
     from Corrector import Corrector
     from Manifolds_tools import construct, plotm
 
@@ -104,8 +104,8 @@ def Manifolds(Data):
     if np.imag(S0).all() == 0:
         S0 = np.real(S0)
 
-    [SF, etf, states1_IG, times1_IG] = PCR3BP_propagator(S0, params,
-        et0, deltat, prnt_out_dt, stop_fun)
+    [SF, etf, states1_IG, times1_IG] = PCR3BP_propagator(S0, et0, deltat,
+        prnt_out_dt, stop_fun, params[0], params[1])
 
     T = 2*times1_IG[-1]
 
@@ -158,8 +158,8 @@ def Manifolds(Data):
                 if dT0 < 1e-3 or T0 > T0_old*2 or abs(Ax) > abs(Ax_tgt):
                     break
 
-            [SF, etf, states_po, times_po] = PCR3BP_propagator (X0, params, et0, T0,
-                prnt_out_dt*10, stop_fun)
+            [SF, etf, states_po, times_po] = PCR3BP_propagator (X0, et0, T0,
+                prnt_out_dt*10, stop_fun, params[0], params[1])
 
             X0_old = X0
             T0_old = T0
@@ -171,8 +171,8 @@ def Manifolds(Data):
         stop_fun = 'None'
         T_po = T0_old
         prnt_out_dt = Data['prnt_out_dt']
-        [SF, etf, states_po, times_po] = PCR3BP_propagator (X0_old, params, et0, T0_old,
-            prnt_out_dt, stop_fun)
+        [SF, etf, states_po, times_po] = PCR3BP_propagator (X0_old, et0, T0_old,
+            prnt_out_dt, stop_fun, params[0], params[1])
 
         # Plot corrected orbit
         plt.plot(states_po[0], states_po[1])
@@ -211,15 +211,13 @@ def Manifolds(Data):
         ## 1.3 Construct manifolds
         npoints = Data['npoints'] # Number of iterations = npoints*2
 
-        if Data['mode'] == 'SE':
-            stop_fun = SE_crossing
-        else:
-            stop_fun = EM_crossing
+        stop_fun = poinc_crossing
 
         [states_s, times_s, SF_s, states_u, times_u, SF_u] = construct(
             params, T_po, states_po, times_po, eigvec, eigval,
-            inv_phi_0, prnt_out_dt, npoints, stop_fun)
+            inv_phi_0, prnt_out_dt, npoints, stop_fun, Data['poincSec'] % 360,
+            pos[Lpoint, 0])
 
         ## 1.4 Plot manifolds
-        plotm(params_SE['mu1'], params_SE['mu2'], pos, states_po, states_s,
-            SF_s, states_u, SF_u)
+        plotm(params[0], params[1], pos, states_po, states_s,
+            SF_s, states_u, SF_u, Data['poincSec'] % 360)

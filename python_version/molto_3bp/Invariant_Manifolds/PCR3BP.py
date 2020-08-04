@@ -1,6 +1,6 @@
-def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
+def PCR3BP_propagator(S0, et0, deltat, prnt_out_dt, stop_fun, *params):
 # ------------------- NUMERICAL INTEGRATION FUNCTION ----------------------
-# This function propagates the state of a S/C according to the PBR4BP.
+# This function propagates the state of a S/C according to the PBR3BP.
 #
 # -------------------------------------------------------------------------
 #
@@ -66,7 +66,7 @@ def PCR3BP_propagator(S0, params, et0, deltat, prnt_out_dt, stop_fun):
 
     return SF, etf, states, times
 
-def PCR3BP_state_derivs (t, state, mu1, mu2):
+def PCR3BP_state_derivs (t, state, mu1, mu2, *addargs):
 # This function computes the acceleration acting at time "et" on
 # the fourth body according to the PBRFBP model.
 # INPUTS:
