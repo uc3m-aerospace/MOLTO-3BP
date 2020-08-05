@@ -12,27 +12,28 @@ from Manifolds import Manifolds
 # Accepted values: 'SE', 'EM', 'ALL'
 # In 'ALL' mode the program will set both flags to True since in order to
 # compose the mission it is necessary to build both manifolds and join them
-f = 'EM'
+f = 'SE'
 
 # Specific Functionalities required by user
 # Accepted values: True (same as any number) or False (same as 0)
 # Any arrangment of values is valid but the program will ask the user for
 # a source to find the data that the previous sections would have produced
-f1  = 0        # Initial guess generator and differential corrector
+f1  = 0        # Initial guess generator, differential corrector and orbit propagator
 f2  = 1        # Manifolds constructor and plotting tool
 flags = [f1, f2]
 
 # Case choice
-Ax_tgt   = 3e-3
+Ax_tgt   = 2e-4
 
-LP       = 2    # 1 -> Lagrange point L1
+LP       = 1    # 1 -> Lagrange point L1
                 # 2 -> Lagrange point L2
 
-poincSec = 160   # Angle (in degrees) between the section required and
+poincSec = 0     # Angle (in degrees) between the section required and
                  # the +X semiplane taken from the 2nd primary
 
 # Numerical parameters
-npoints  = 20         # Number of sections of the orbit to propagate manifolds
+npoints  = 10         # Number of points in the orbit to propagate manifolds from
+                      # The program propagates the perturbation in both directions
 
 prnt_out_dt = 0.01    # print time period (if f1 = False, must be consistent
                       # with the sampling rate of the input data!)

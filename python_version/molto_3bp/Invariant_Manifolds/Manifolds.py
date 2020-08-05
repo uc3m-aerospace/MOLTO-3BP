@@ -77,9 +77,9 @@ def Manifolds(Data):
 
     # Initial position in x axis: distance = x0*L_EM to L2 => Ax
     if Data['mode'] == 'SE':
-        Ax = -1e-4  # Non dimensional distance
+        Ax = -1e-4*np.sign(xe - params[0])  # Non dimensional distance
     else:
-        Ax = -2e-3
+        Ax = -2e-3*np.sign(xe - params[0])
                 # This value says that the initial position is on the x axis,
                 # at distance x0 from the libration point
 
@@ -176,7 +176,7 @@ def Manifolds(Data):
 
         # Plot corrected orbit
         plt.plot(states_po[0], states_po[1])
-        plt.plot(pos[1,0], pos[1,1], '*')
+        plt.plot(pos[Lpoint,0], pos[Lpoint,1], '*')
         plt.show()
 
         # Save variables
@@ -213,11 +213,32 @@ def Manifolds(Data):
 
         stop_fun = poinc_crossing
 
+        ang = Data['poincSec'] % 360
+        if Lpoint:
+            angmin = min(np.arctan2(states_po[1], states_po[0] - params[0]))
+            if ang*np.pi/180 > angmin +2*np.pi or ang*np.pi/180 < -angmin:
+                print('This angle is not valid (intersecting initial orbit)!')
+                if abs(ang*np.pi/180 - (angmin+2*np.pi)) < abs(ang*np.pi/180 + angmin):
+                    ang = 4/3*angmin*180/np.pi +360
+                    print('Reassigning to %3.2f...' % ang)
+                else:
+                    ang = -4/3*angmin*180/np.pi
+                    print('Reassigning to %3.2f...' % ang)
+        else:
+            angmin = min(np.arctan2(states_po[1], params[0] - states_po[0])) + np.pi
+            if ang*np.pi/180 > angmin and ang*np.pi/180 < -angmin +2*np.pi:
+                print('This angle is not valid (intersecting initial orbit)!')
+                if abs(ang*np.pi/180 - (-angmin+2*np.pi)) < abs(ang*np.pi/180 - angmin):
+                    ang = -4/3*angmin*180/np.pi + 420
+                    print('Reassigning to %3.2f...' % ang)
+                else:
+                    ang = 4/3*angmin*180/np.pi - 60
+                    print('Reassigning to %3.2f...' % ang)
+
         [states_s, times_s, SF_s, states_u, times_u, SF_u] = construct(
             params, T_po, states_po, times_po, eigvec, eigval,
-            inv_phi_0, prnt_out_dt, npoints, stop_fun, Data['poincSec'] % 360,
-            pos[Lpoint, 0])
+            inv_phi_0, prnt_out_dt, npoints, stop_fun, ang, pos[Lpoint, 0])
 
         ## 1.4 Plot manifolds
-        plotm(params[0], params[1], pos, states_po, states_s,
-            SF_s, states_u, SF_u, Data['poincSec'] % 360)
+        plotm(params[0], params[1], pos[Lpoint], states_po, states_s, SF_s,
+            states_u, SF_u, ang, angmin)
