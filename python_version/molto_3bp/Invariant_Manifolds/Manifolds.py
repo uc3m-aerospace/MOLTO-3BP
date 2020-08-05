@@ -79,7 +79,7 @@ def Manifolds(Data):
     if Data['mode'] == 'SE':
         Ax = -1e-4*np.sign(xe - params[0])  # Non dimensional distance
     else:
-        Ax = -2e-3*np.sign(xe - params[0])
+        Ax = -1e-3*np.sign(xe - params[0])
                 # This value says that the initial position is on the x axis,
                 # at distance x0 from the libration point
 

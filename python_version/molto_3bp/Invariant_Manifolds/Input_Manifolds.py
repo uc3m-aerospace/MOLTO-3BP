@@ -12,20 +12,20 @@ from Manifolds import Manifolds
 # Accepted values: 'SE', 'EM', 'ALL'
 # In 'ALL' mode the program will set both flags to True since in order to
 # compose the mission it is necessary to build both manifolds and join them
-f = 'SE'
+f = 'EM'
 
 # Specific Functionalities required by user
 # Accepted values: True (same as any number) or False (same as 0)
 # Any arrangment of values is valid but the program will ask the user for
 # a source to find the data that the previous sections would have produced
-f1  = 0        # Initial guess generator, differential corrector and orbit propagator
+f1  = 1        # Initial guess generator, differential corrector and orbit propagator
 f2  = 1        # Manifolds constructor and plotting tool
 flags = [f1, f2]
 
 # Case choice
-Ax_tgt   = 2e-4
+Ax_tgt   = 3e-3
 
-LP       = 1    # 1 -> Lagrange point L1
+LP       = 2    # 1 -> Lagrange point L1
                 # 2 -> Lagrange point L2
 
 poincSec = 0     # Angle (in degrees) between the section required and

@@ -27,7 +27,7 @@ def poinc_crossing(et, state, mu1, mu2, ang, L):
         cond = x > L
 
     if d < tol and np.sign(np.cos(ang*np.pi/180)) == np.sign(x-mu1) and\
-        np.sign(np.sin(ang*np.pi/180)) == np.sign(np.round(y, decimals = 5)) and\
+        np.sign(np.sin(ang*np.pi/180)) == np.sign(np.round(y, decimals = 4)) and\
         cond:
         return 0
     elif abs(y) > abs(L-mu1):
