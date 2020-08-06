@@ -86,32 +86,32 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
         [0, abs(pos[0] - mu1)*np.sin(ang*np.pi/180)], 'y--')
     plt.show()
 
-    tangVels = max(abs(np.cos(ang*np.pi/180)*SF_s[SF_s[:, 1] < (pos[0]-mu1), 2]\
-        - np.sin(ang*np.pi/180)*SF_s[SF_s[:, 1] < (pos[0]-mu1), 3]))
-    tangVelu = max(abs(np.cos(ang*np.pi/180)*SF_u[SF_u[:, 1] > -(pos[0]-mu1), 2]\
-        - np.sin(ang*np.pi/180)*SF_u[SF_u[:, 1] > -(pos[0]-mu1), 3]))
+    tangVels = max(abs(np.cos(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 2]\
+        - np.sin(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 3]))
+    tangVelu = max(abs(np.cos(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 2]\
+        - np.sin(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) > abs(pos[0]-mu1), 3]))
     print('The maximum tangential velocities registered in this Poincaré section are: ')
     print('Max Vt (stable manifold):   %1.5f' % tangVels)
     print('Max Vt (unstable manifold): %1.5f' % tangVelu)
 
     fig, ax = plt.subplots()
     for j in range(len(SF_s)):
-        if SF_s[j, 1] < (pos[0]-mu1):
+        if abs(SF_s[j, 1]) < abs(pos[0]-mu1):
             ax.plot(np.sqrt((SF_s[j, 0] - mu1)**2 + SF_s[j, 1]**2),
                 np.sin(ang*np.pi/180)*SF_s[j, 2] + np.cos(ang*np.pi/180)*SF_s[j, 3],
                 'bo')
-        if SF_u[j, 1] > -(pos[0]-mu1):
+        if abs(SF_u[j, 1]) < abs(pos[0]-mu1):
             ax.plot(np.sqrt((SF_u[j, 0] - mu1)**2 + SF_u[j, 1]**2),
                 np.sin(ang*np.pi/180)*SF_u[j, 2] + np.cos(ang*np.pi/180)*SF_u[j, 3],
                 'ro')
-    xu = np.sqrt((SF_u[SF_u[:, 1] > -(pos[0]-mu1), 0] - mu1)**2\
-        + SF_u[SF_u[:, 1] > -(pos[0]-mu1), 1]**2)
-    yu = np.sin(ang*np.pi/180)*SF_u[SF_u[:, 1] > -(pos[0]-mu1), 2]\
-        + np.cos(ang*np.pi/180)*SF_u[SF_u[:, 1] > -(pos[0]-mu1), 3]
-    xs = np.sqrt((SF_s[SF_s[:, 1] < (pos[0]-mu1), 0] - mu1)**2\
-        + SF_s[SF_s[:, 1] < (pos[0]-mu1), 1]**2)
-    ys = np.sin(ang*np.pi/180)*SF_s[SF_s[:, 1] < (pos[0]-mu1), 2]\
-        + np.cos(ang*np.pi/180)*SF_s[SF_s[:, 1] < (pos[0]-mu1), 3]
+    xu = np.sqrt((SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 0] - mu1)**2\
+        + SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 1]**2)
+    yu = np.sin(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 2]\
+        + np.cos(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 3]
+    xs = np.sqrt((SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 0] - mu1)**2\
+        + SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 1]**2)
+    ys = np.sin(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 2]\
+        + np.cos(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 3]
 
     centeru = [np.mean(xu), np.mean(yu)]
     centers = [np.mean(xs), np.mean(ys)]

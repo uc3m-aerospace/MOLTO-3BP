@@ -13,9 +13,9 @@ from Halo_Main import Halo_Main
 # Accepted values: True (same as any number) or False (same as 0)
 # Any arrangment of values is valid but the program will ask the user for
 # a source to find the data that the previous sections would have produced
-f1  = False      # Initial guess generator from 3rd Order Richardson Expansion
-f2  = True      # Differential Correction module to refine Initial guess
-f3  = True      # Propagator and plotting tool
+f1  = 1      # Initial guess generator from 3rd Order Richardson Expansion
+f2  = 1      # Differential Correction module to refine Initial guess
+f3  = 1      # Propagator and plotting tool
 flags = [f1, f2, f3]
 
 # Time period of study

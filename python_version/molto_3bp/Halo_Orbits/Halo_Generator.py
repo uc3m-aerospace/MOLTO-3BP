@@ -153,7 +153,7 @@ def Halo_Generator(Data):
     # 1 orbit display
 
     tdim = t*Tconversion
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, constrained_layout = True)
     ax1.plot(x[tdim<T], y[tdim<T])
     ax1.plot(0,0,'bx')
     ax1.plot(xL,0,'ro')

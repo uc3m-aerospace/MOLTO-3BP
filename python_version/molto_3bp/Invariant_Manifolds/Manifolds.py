@@ -34,9 +34,9 @@ def Manifolds(Data):
     ## 0. Initialize General variables
     # CSpice package, Gravitational constants, Earth-Moon, and Sun-Earth constants
     print('SE & EM Manifolds Test Cases Software')
-    if Data['mode'] not in ['SE', 'EM', 'ALL']:
+    if Data['mode'] not in ['SE', 'EM']:
         raise Exception('Manifolds_Main:modeError.'+\
-            '    The mode selected is not valid [\'SE\'][\'ME\'][\'ALL\']!')
+            '    The mode selected is not valid [\'SE\'][\'ME\']!')
 
     # Define parameters (input variable to compute manifolds)
     print('Loading Variables and kernels...')
