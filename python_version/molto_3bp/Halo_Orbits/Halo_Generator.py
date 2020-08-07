@@ -109,7 +109,7 @@ def Halo_Generator(Data):
     # Added variables - Lindstedt-Poncairé Method
 
     nu1 = 0
-    nu2 = s1*(Ax)**2+s2*(Az)**2 # REVISAR!!!!!!!!!!!
+    nu2 = s1*(Ax)**2+s2*(Az)**2
     nu  = 1+nu1+nu2
     tau = nu*t
 

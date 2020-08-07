@@ -8,7 +8,7 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
     from scipy import linalg
     from PCR3BP import PCR3BP_propagator
 
-    ## Step 4: Computation of invariant manifolds
+    ## Computation of invariant manifolds
     T_po = T0
     idx  = np.linspace(0, len(times_po), npoints, endpoint = False, dtype = int)
     et0  = 0

@@ -84,7 +84,7 @@ def PCR3BP_state_derivs (t, state, mu1, mu2, *addargs):
     derivs = np.zeros(len(state))
 # Get state
     if len(state) == 4:
-        [x, y, xdot, ydot] = state
+        [x, y] = state[:2]
         # Get parameters (2D)
         Ux = mu2*(mu1 - x) - mu1*(mu2 + x)\
             - (mu2*(mu1 - x))/((mu1 - x)**2 + y**2)**(3/2)\
@@ -95,7 +95,7 @@ def PCR3BP_state_derivs (t, state, mu1, mu2, *addargs):
         derivs[2:] = [2*state[3] - Ux, -2*state[2] - Uy]
 
     if len(state) == 6:
-        [x, y, z, xdot, ydot, zdot] = state
+        [x, y, z] = state[:3]
         # Get parameters (3D)
         Ux = mu2*(mu1 - x) - mu1*(mu2 + x)\
             - (mu2*(mu1 - x))/((mu1 - x)**2 + y**2 + z**2)**(3/2)\

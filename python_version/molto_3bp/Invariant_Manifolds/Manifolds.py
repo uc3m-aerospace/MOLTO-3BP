@@ -2,7 +2,7 @@ def Manifolds(Data):
 ###########################################################################
 #######################        MANIFOLDS       ############################
 ###########################################################################
-# This code is devoted to compute the invariant manifolds of the Sun-Earth
+# This code is devoted to compute the invariant manifolds of any input orbit
 # It is divided in the following sections:
 
 ### 0. Initialize General variables
