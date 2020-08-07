@@ -66,7 +66,7 @@ def PCR3BP_propagator(S0, et0, deltat, prnt_out_dt, stop_fun, *params):
 
     return SF, etf, states, times
 
-def PCR3BP_state_derivs (t, state, mu1, mu2, *addargs):
+def PCR3BP_state_derivs (t, state, mu1, mu2):
 # This function computes the acceleration acting at time "et" on
 # the fourth body according to the PBRFBP model.
 # INPUTS:
@@ -81,33 +81,19 @@ def PCR3BP_state_derivs (t, state, mu1, mu2, *addargs):
     import numpy as np
 
 # Initialize derivative vector (4 components)
-    derivs = np.zeros(len(state))
+    derivs = np.zeros(4)
 # Get state
-    if len(state) == 4:
-        [x, y, xdot, ydot] = state
-        # Get parameters (2D)
-        Ux = mu2*(mu1 - x) - mu1*(mu2 + x)\
-            - (mu2*(mu1 - x))/((mu1 - x)**2 + y**2)**(3/2)\
-            + (mu1*(mu2 + x))/((mu2 + x)**2 + y**2)**(3/2)
-        Uy = (mu1*y)/((mu2 + x)**2 + y**2)**(3/2) - mu2*y - mu1*y\
-            + (mu2*y)/((mu1 - x)**2 + y**2)**(3/2)
-        # Velocity derivatives (2D)
-        derivs[2:] = [2*state[3] - Ux, -2*state[2] - Uy]
-
-    if len(state) == 6:
-        [x, y, z, xdot, ydot, zdot] = state
-        # Get parameters (3D)
-        Ux = mu2*(mu1 - x) - mu1*(mu2 + x)\
-            - (mu2*(mu1 - x))/((mu1 - x)**2 + y**2 + z**2)**(3/2)\
-            + (mu1*(mu2 + x))/((mu2 + x)**2 + y**2 + z**2)**(3/2)
-        Uy = (mu1*y)/((mu2 + x)**2 + y**2 + z**2)**(3/2) - mu2*y - mu1*y\
-            + (mu2*y)/((mu1 - x)**2 + y**2 + z**2)**(3/2)
-        Uz = (mu1*z)/((mu2 + x)**2 + y**2 + z**2)**(3/2)\
-            + (mu2*z)/((mu1 - x)**2 + y**2 + z**2)**(3/2)
-        # Velocity derivatives (3D)
-        derivs[3:] = [2*state[4] - Ux, -2*state[3] - Uy, -Uz]
+    [x, y, xdot, ydot] = state
+    # Get parameters (2D)
+    Ux = mu2*(mu1 - x) - mu1*(mu2 + x)\
+        - (mu2*(mu1 - x))/((mu1 - x)**2 + y**2)**(3/2)\
+        + (mu1*(mu2 + x))/((mu2 + x)**2 + y**2)**(3/2)
+    Uy = (mu1*y)/((mu2 + x)**2 + y**2)**(3/2) - mu2*y - mu1*y\
+        + (mu2*y)/((mu1 - x)**2 + y**2)**(3/2)
+    # Velocity derivatives (2D)
+    derivs[2:] = [2*state[3] - Ux, -2*state[2] - Uy]
 
 # Position derivatives
-    derivs[:int(len(state)/2)] = state[int(len(state)/2):]
+    derivs[:2] = state[2:]
 
     return derivs
