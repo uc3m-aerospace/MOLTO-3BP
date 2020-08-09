@@ -14,7 +14,12 @@ def Halo_Main(Input):
 
     if Options['flags'][0]:
         from .Halo_Generator import Halo_Generator
-        Halo_Generator(Options)
+        if sum(Options['flags']) == 3:
+            (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0, xL) =\
+                Halo_Generator(Options)
+            return (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0, xL)
+        else:
+            Halo_Generator(Options)
     else:
         if Options['method'] != 'insitu' and Options['method'] != 'text':
             raise Exception('Halo_Main:methodError.'+\

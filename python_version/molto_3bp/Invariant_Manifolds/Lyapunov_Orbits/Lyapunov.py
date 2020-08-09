@@ -40,9 +40,9 @@ def Lyapunov(Data):
 
     # These parameters are called by PCR3BP_state_derivs
     if Data['mode'] == 'SE':
-        params = (params_SE['mu1'], params_SE['mu2'])
+        Data['params'] = (params_SE['mu1'], params_SE['mu2'])
     else:
-        params = (params_EM['mu1'], params_EM['mu2'])
+        Data['params'] = (params_EM['mu1'], params_EM['mu2'])
 
     ###########################################################################
     ## 1. SE or EM SYSTEM
@@ -50,10 +50,10 @@ def Lyapunov(Data):
 
     ## 1.1 Lagrange Points
     guess = np.array([0.9, 1.01, -1])
-    pos   = lagrange_points(params[1], guess) # Returns, x and y coordinates of L points
+    pos   = lagrange_points(Data['params'][1], guess) # Returns, x and y coordinates of L points
 
     # Plot Lagrange points
-    plot_lagrange_points(params[0], params[1], pos)
+    plot_lagrange_points(Data['params'][0], Data['params'][1], pos)
     # Select L2 point
     Lpoint = Data['LP'] -1
     # xe = position in x of L2
@@ -65,15 +65,15 @@ def Lyapunov(Data):
     # c)Apply a differential correction algorithm
 
     # a)Initial condition state matrix
-    mubar = params[1]*abs(xe-1+params[1])**(-3) +\
-        (1-params[1])*abs(xe+params[1])**(-3)
+    mubar = Data['params'][1]*abs(xe-1+Data['params'][1])**(-3) +\
+        (1-Data['params'][1])*abs(xe+Data['params'][1])**(-3)
 
     a     = 2*mubar + 1
     b     = mubar - 1
 
     # Initial position in x axis: distance = x0*L_EM to L2 => Ax
     if Data['mode'] == 'SE':
-        Ax = -1e-4*np.sign(xe - params[0])  # Non dimensional distance
+        Ax = -1e-4*np.sign(xe - Data['params'][0])  # Non dimensional distance
     else:
         if Lpoint:
             Ax = -2e-3
@@ -104,7 +104,7 @@ def Lyapunov(Data):
         S0 = np.real(S0)
 
     [SF, etf, states1_IG, times1_IG] = PCR3BP_propagator(S0, et0, deltat,
-        prnt_out_dt, stop_fun, params[0], params[1])
+        prnt_out_dt, stop_fun, Data['params'][0], Data['params'][1])
 
     T = 2*times1_IG[-1]
 
@@ -139,7 +139,7 @@ def Lyapunov(Data):
 
         print('Ax = %10.5e & Ax target = %10.5e' % (abs(Ax), abs(Ax_tgt)))
 
-        [X0, T0, Error, Floquet] = Corrector(PCR3BP_state_derivs, S0, params,
+        [X0, T0, Error, Floquet] = Corrector(PCR3BP_state_derivs, S0, Data['params'],
             T0, Itmax, Tol, TolRel, TolAbs, dh, Ind_Fix)
 
         # X0 are the corrected IC and T0 is the corrected period
@@ -156,7 +156,7 @@ def Lyapunov(Data):
                 break
 
         [SF, etf, states_po, times_po] = PCR3BP_propagator (X0, et0, T0,
-            prnt_out_dt*10, stop_fun, params[0], params[1])
+            prnt_out_dt*10, stop_fun, Data['params'][0], Data['params'][1])
 
         X0_old = X0
         T0_old = T0
@@ -169,7 +169,7 @@ def Lyapunov(Data):
     T_po = T0_old
     prnt_out_dt = Data['prnt_out_dt']
     [SF, etf, states_po, times_po] = PCR3BP_propagator (X0_old, et0, T0_old,
-        prnt_out_dt, stop_fun, params[0], params[1])
+        prnt_out_dt, stop_fun, Data['params'][0], Data['params'][1])
 
     # Plot corrected orbit
     fig, ax = plt.subplots()
@@ -189,3 +189,5 @@ def Lyapunov(Data):
     fid.write('  %.20f %.20f %.20f %.20f\n' % (states_po[0, 0],
         states_po[1, 0], states_po[2, 0], states_po[3, 0]))
     fid.close()
+
+    return (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0, pos)

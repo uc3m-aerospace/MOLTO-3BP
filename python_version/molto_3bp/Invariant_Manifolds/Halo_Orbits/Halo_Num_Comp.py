@@ -127,9 +127,13 @@ def Halo_Num_Comp(Data):
 
     if Data['flags'][2]:
         Data['IC'] = np.array([x0[0], z0, vy0[0]])
+        Data['tf'] = t[-1]*2
 
         from .Halo_Plot import Halo_Plot
-        Halo_Plot(Data)
+        (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0) =\
+            Halo_Plot(Data)
+
+        return (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0)
     else:
         text = '# Data Produced by Halo Numerical Computation #\n' + '# opt = ' +\
             str(Data['opt']) + '; LP = ' + str(Data['LP']) + '; m = ' +\

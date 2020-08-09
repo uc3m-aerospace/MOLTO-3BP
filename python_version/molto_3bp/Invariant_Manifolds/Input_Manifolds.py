@@ -9,21 +9,22 @@
 from Manifolds import Manifolds
 
 # Main Functionalities (expected string)
+# Type of orbit of interest, 'LY' == lyapunov orbit (2D)
+#                            'HL' == halo orbit (3D)
+type = 'HL'
+
+# System analyzed
 # Accepted values: 'SE', 'EM'
-f = 'EM'
+f = 'SE'
 
-# Specific Functionalities required by user
-# Accepted values: True (same as any number) or False (same as 0)
-# Any arrangment of values is valid but the program will ask the user for
-# a source to find the data that the previous sections would have produced
-f1  = 0        # Initial guess generator, differential corrector and orbit propagator
-f2  = 1        # Manifolds constructor and plotting tool
-flags = [f1, f2]
+# Case choice (Orbital amplitude)
+Ax       = 3e-3 # Lyapunov Orbit characterization
 
-# Case choice (if f1 = False, these must be consistent with the data introduced)
-Ax_tgt   = 3e-3
+Az       = 95e3 # Halo
+m        = 1    # Orbit
+phi      = 0    # characterization
 
-LP       = 2    # 1 -> Lagrange point L1
+LP       = 1    # 1 -> Lagrange point L1
                 # 2 -> Lagrange point L2
 
 poincSec = 90    # Angle (in degrees) between the section required and
@@ -46,7 +47,8 @@ prnt_out_dt = 0.01    # print time period (if f1 = False, must be consistent
 IC = 'sample.txt'
 
 # Combining all input data into a single data structure
-Input = {'mode': f, 'flags': flags, 'Ax_tgt': Ax_tgt, 'LP': LP, 'poincSec': poincSec,
-    'npoints': npoints, 'prnt_out_dt': prnt_out_dt, 'IC': IC}
+Input = {'type': type, 'mode': f, 'Ax_tgt': Ax, 'Az': Az, 'm': m, 'phi': phi,
+    'LP': LP, 'poincSec': poincSec, 'npoints': npoints,
+    'prnt_out_dt': prnt_out_dt, 'IC': IC}
 
 Manifolds(Input)

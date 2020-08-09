@@ -7,7 +7,14 @@ def Halo_Generator(Data):
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
 
-    t  = np.linspace(0, Data['tf'], int(Data['nsteps']))   # s <-- Propagation time
+    print('--- Halo Generator: 3rd order Richardson expansion ---')
+    if Data['mode'] == 'SE':
+        print('\nCR3BP: SUN-(EARTH+MOON) SYSTEM')
+    else:
+        print('\nCR3BP: EARTH-MOON SYSTEM')
+
+    t  = tspan = np.linspace(0, Data['tf'], int(Data['tf']/Data['prnt_out_dt']) +1)
+        # s <-- Propagation time
 
     Tconversion = Data['TSE']/(2*np.pi)
 
@@ -173,12 +180,6 @@ def Halo_Generator(Data):
     plt.show()
 
     # # Displays
-    print('--- Halo Generator: 3rd order Richardson expansion ---\n')
-    if Data['opt'] == 1:
-        print('\nCR3BP: SUN-(EARTH+MOON) SYSTEM')
-    else:
-        print('\nCR3BP: EARTH-MOON SYSTEM')
-
     print('-- Results ---')
     print('Ax = %.1f' % (Ax*Data['L']) + ' km;   Az = ' + str(Data['Az']) + ' km')
     print('T (days) = %.5f' % Tdays)
@@ -205,9 +206,11 @@ def Halo_Generator(Data):
         Data['IC'] = np.array([x0, z0, vy0])
 
         from .Halo_Num_Comp import Halo_Num_Comp
-        Halo_Num_Comp(Data)
+        (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0) =\
+            Halo_Num_Comp(Data)
+        return (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0, xL)
     else:
-        text = '# Data Produced by Halo Generator #\n' + '# opt = ' + str(Data['opt']) +\
+        text = '# Data Produced by Halo Generator #\n' + '# mode = ' + str(Data['mode']) +\
             '; LP = ' + str(Data['LP']) + '; m = ' + str(Data['m']) + '; phi = ' +\
             str(Data['phi']) + '; Az = ' + str(Data['Az']) + ';\n' +\
             'x0  = %.20f\n' % x0 + 'y0  = %.20f\n' % y0 + 'z0  = %.20f\n' % z0 +\

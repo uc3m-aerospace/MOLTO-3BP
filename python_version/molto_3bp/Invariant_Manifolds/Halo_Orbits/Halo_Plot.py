@@ -4,8 +4,9 @@ def Halo_Plot(Data):
     # Importing required functions
     #
     import numpy as np
+    from scipy import linalg
     from scipy.integrate import solve_ivp
-    from .intFun import ThreeBodyProp
+    from .intFun import ThreeBodyProp, DiffCorrection
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
 
@@ -28,15 +29,30 @@ def Halo_Plot(Data):
                 '   The text file selected does not have the right format!')
 
     q0 = np.array([x0, 0, z0, 0, vy0, 0])
-    tspan = np.linspace(0, Data['tf'], int(Data['nsteps']))
+    tspan = np.linspace(0, Data['tf'], int(Data['tf']/Data['prnt_out_dt']) +1)
 
     sol = solve_ivp(ThreeBodyProp, [0, Data['tf']],
         q0, t_eval = tspan, args = (Data['mu'],),
-        atol = 1e-10,
-        rtol = 1e-7)
-    t = sol.t
+        atol = 1e-15,
+        rtol = 1e-10)
+    times_po = sol.t
+    states_po = sol.y
+    x = states_po[0]; y = states_po[1]; z = states_po[2]
+
+    q0     = np.zeros(42)
+    q0[:6] = [x0, 0, z0, 0, vy0, 0]
+    phi0   = np.identity(6)
+    q0[6:] = phi0.ravel()
+
+    sol = solve_ivp(DiffCorrection, [0, Data['tf']],
+        q0, args = (Data['mu'],),
+        atol = 1e-15,
+        rtol = 1e-10)
     q = sol.y
-    x = q[0]; y = q[1]; z = q[2]
+    Phi = q[6:,-1].reshape(6, -1)
+
+    [eigval, eigvec] = linalg.eig(Phi)
+    inv_phi_0        = linalg.inv(eigvec)
 
     # Figures
 
@@ -56,3 +72,5 @@ def Halo_Plot(Data):
     ax3.plot(y, z)
     ax3.set(xlabel='y', ylabel='z')
     plt.show()
+
+    return (Data, states_po, times_po, Data['tf'], eigvec, eigval, inv_phi_0)
