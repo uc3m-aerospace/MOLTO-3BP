@@ -21,11 +21,11 @@ def Lyapunov(Data):
 #
     import numpy as np
     import matplotlib.pyplot as plt
-    from Load_Variables import load_variables
-    from IC_statemat import IC_statemat
-    from Lagrange import lagrange_points, plot_lagrange_points
-    from PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
-    from Corrector import Corrector
+    from .Load_Variables import load_variables
+    from .IC_statemat import IC_statemat
+    from .Lagrange import lagrange_points, plot_lagrange_points
+    from .PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
+    from .Corrector import Corrector
 
     ## 0. Initialize General variables
     # CSpice package, Gravitational constants, Earth-Moon, and Sun-Earth constants

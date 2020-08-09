@@ -3,7 +3,7 @@ def load_variables():
     # Import required functions
     #
     import spiceypy as spice
-    from kernels.Load_Kernels import load_kernels
+    from .kernels.Load_Kernels import load_kernels
 
     ## Load Spice kernels
     load_kernels()

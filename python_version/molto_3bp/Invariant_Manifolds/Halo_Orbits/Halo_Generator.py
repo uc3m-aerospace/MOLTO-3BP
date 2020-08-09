@@ -204,7 +204,7 @@ def Halo_Generator(Data):
     if Data['flags'][1]:
         Data['IC'] = np.array([x0, z0, vy0])
 
-        from Halo_Num_Comp import Halo_Num_Comp
+        from .Halo_Num_Comp import Halo_Num_Comp
         Halo_Num_Comp(Data)
     else:
         text = '# Data Produced by Halo Generator #\n' + '# opt = ' + str(Data['opt']) +\

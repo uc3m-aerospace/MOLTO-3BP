@@ -5,7 +5,7 @@ def Halo_Plot(Data):
     #
     import numpy as np
     from scipy.integrate import solve_ivp
-    from intFun import ThreeBodyProp
+    from .intFun import ThreeBodyProp
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
 

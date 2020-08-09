@@ -6,7 +6,7 @@
 #
 # Import functions required
 #
-from Lyapunov import Lyapunov
+from Lyapunov_Orbits.Lyapunov import Lyapunov
 
 # Main Functionalities (expected string)
 # Accepted values: 'SE', 'EM'

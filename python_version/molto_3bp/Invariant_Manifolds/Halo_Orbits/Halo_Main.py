@@ -1,6 +1,6 @@
 def Halo_Main(Input):
 
-    from Data import Data
+    from .Data import Data
 
     Options = Data(Input)
 
@@ -13,15 +13,15 @@ def Halo_Main(Input):
             The values introduced for the flags are not valid!')
 
     if Options['flags'][0]:
-        from Halo_Generator import Halo_Generator
+        from .Halo_Generator import Halo_Generator
         Halo_Generator(Options)
     else:
         if Options['method'] != 'insitu' and Options['method'] != 'text':
             raise Exception('Halo_Main:methodError.'+\
                 '    The method selected is not valid [\'insitu\'][\'text\']!')
         if Options['flags'][1]:
-            from Halo_Num_Comp import Halo_Num_Comp
+            from .Halo_Num_Comp import Halo_Num_Comp
             Halo_Num_Comp(Options)
         elif Options['flags'][2]:
-            from Halo_Plot import Halo_Plot
+            from .Halo_Plot import Halo_Plot
             Halo_Plot(Options)

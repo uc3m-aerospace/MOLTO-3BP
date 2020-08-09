@@ -6,7 +6,7 @@ def Halo_Num_Comp(Data):
     import numpy as np
     from scipy.integrate import solve_ivp
     from scipy import linalg
-    from intFun import DiffCorrection
+    from .intFun import DiffCorrection
 
     ## IC guess
 
@@ -128,7 +128,7 @@ def Halo_Num_Comp(Data):
     if Data['flags'][2]:
         Data['IC'] = np.array([x0[0], z0, vy0[0]])
 
-        from Halo_Plot import Halo_Plot
+        from .Halo_Plot import Halo_Plot
         Halo_Plot(Data)
     else:
         text = '# Data Produced by Halo Numerical Computation #\n' + '# opt = ' +\

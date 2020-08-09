@@ -7,7 +7,7 @@
 # Import functions required
 #
 import numpy as np
-from Halo_Main import Halo_Main
+from Halo_Orbits.Halo_Main import Halo_Main
 
 # Functionalities required by user
 # Accepted values: True (same as any number) or False (same as 0)
