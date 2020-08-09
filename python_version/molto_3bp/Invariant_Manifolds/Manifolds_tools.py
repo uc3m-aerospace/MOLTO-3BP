@@ -15,6 +15,7 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
     eps  = 1e-7
     deltat = 5*T_po
     sign   = np.array([-1, 1])
+    veclen = len(states_po[:, 0])
 
     # Matrix initialization
     states_u = []
@@ -28,8 +29,9 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
         for j in range(len(sign)):
             x = states_po[:, idx[i]]
             t = times_po[idx[i]]
-            phi = [eigvec[:, 0]*np.exp(eigval[0]*t), eigvec[:, 1]*np.exp(eigval[1]*t),
-                eigvec[:, 2]*np.exp(eigval[2]*t), eigvec[:, 3]*np.exp(eigval[3]*t)]
+            phi = np.zeros((veclen, veclen)) + 0.j
+            for k in range(veclen):
+                phi[:, k] = eigvec[:, k]*np.exp(eigval[k]*t)
             Phi = phi * inv_phi_0
             [mon_eigvals, mon_eigvecs] = linalg.eig(Phi)
 

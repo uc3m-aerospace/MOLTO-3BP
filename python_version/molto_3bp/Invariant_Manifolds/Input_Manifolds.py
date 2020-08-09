@@ -15,7 +15,7 @@ type = 'HL'
 
 # System analyzed
 # Accepted values: 'SE', 'EM'
-f = 'SE'
+f = 'EM'
 
 # Case choice (Orbital amplitude)
 Ax       = 3e-3 # Lyapunov Orbit characterization
@@ -34,8 +34,7 @@ poincSec = 90    # Angle (in degrees) between the section required and
 npoints  = 10         # Number of points in the orbit to propagate manifolds from
                       # The program propagates the perturbation in both directions
 
-prnt_out_dt = 0.01    # print time period (if f1 = False, must be consistent
-                      # with the sampling rate of the input data!)
+prnt_out_dt = 0.01    # print time period
 
 # In order to introduce data from the exterior, the program expects a .txt input
 
