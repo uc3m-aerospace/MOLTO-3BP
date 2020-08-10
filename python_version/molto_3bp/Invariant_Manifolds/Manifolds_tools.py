@@ -28,7 +28,7 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
     for i in range(npoints):
         for j in range(len(sign)):
             x = states_po[:, idx[i]]
-            t = times_po[idx[i]]
+            t = times_po[idx[i]]/100
             phi = np.zeros((veclen, veclen)) + 0.j
             for k in range(veclen):
                 phi[:, k] = eigvec[:, k]*np.exp(eigval[k]*t)
@@ -41,6 +41,8 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
             Xu = np.real(states_po[:, idx[i]] + eps*sign[j]*Yu)
             Xs = np.real(states_po[:, idx[i]] + eps*sign[j]*Ys)
 
+            stop_fun.direction = -(L - params[0])
+
             # Integrate unstable manifold forwards in time
             [SF, etf_u, states, times] = PCR3BP_propagator(Xu, et0, deltat,
                 prnt_out_dt, stop_fun, params[0], params[1], ang, L)
@@ -48,6 +50,8 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
             states_u.append(states)
             times_u.append(times)
             SF_u = np.append([SF_u], [SF])
+
+            stop_fun.direction = (L - params[0])
 
             # Integrate stable manifold backwards in time
             [SF, etf, states, times] =  PCR3BP_propagator(Xs, et0, -deltat,
@@ -59,7 +63,8 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
 
             print('Iteration: ' + str(2*i + j +1))
 
-    return [states_s, times_s, SF_s.reshape(-1, 4), states_u, times_u, SF_u.reshape(-1, 4)]
+    return [states_s, times_s, SF_s.reshape(-1, veclen), states_u, times_u,
+        SF_u.reshape(-1, veclen)]
 
 def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin):
 

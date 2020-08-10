@@ -10,27 +10,19 @@ def poinc_crossing(et, state, mu1, mu2, ang, L):
 
     [x, y] = state[:2]
 
-    d = abs((L - mu1)*np.sin(ang*np.pi/180)*x\
-        - (L - mu1)*np.cos(ang*np.pi/180)*y\
-        - (L - mu1)*np.sin(ang*np.pi/180)*mu1)\
-        /(np.sqrt(((L - mu1)*np.sin(ang*np.pi/180))**2\
-        + ((L - mu1)*np.cos(ang*np.pi/180))**2))
+    d = ((L - mu1)*np.sin(ang*np.pi/180)*(x-mu1)\
+        - (L - mu1)*np.cos(ang*np.pi/180)*y)
 
-    if np.log10(mu2) < -5:
-        tol = 1e-5
-    else:
-        tol = 5e-4
+    xprime = np.cos(ang*np.pi/180)*(x-mu1) + np.sin(ang*np.pi/180)*y
 
-    if L > mu1:
-        cond = x < L
-    else:
-        cond = x > L
+    cond = xprime > 0
 
-    if d < tol and np.sign(np.cos(ang*np.pi/180)) == np.sign(x-mu1) and\
-        np.sign(np.sin(ang*np.pi/180)) == np.sign(np.round(y, decimals = 4)) and\
-        cond:
+    if abs(y) > abs(L-mu1):
         return 0
-    elif abs(y) > abs(L-mu1):
-        return 0
+    elif cond:
+        return d
     else:
-        return 1
+        if ang - 180 > 0:
+            return -mu1
+        else:
+            return mu1

@@ -77,9 +77,6 @@ def Manifolds(Data):
         inv_phi_0, Data['prnt_out_dt'], npoints, stop_fun, ang,
         xL)
 
-    for i in times_s:
-        print(len(i))
-
     print('Plotting manifolds')
 
     ## 1.4 Plot manifolds

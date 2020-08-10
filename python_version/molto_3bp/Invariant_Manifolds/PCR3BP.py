@@ -37,9 +37,10 @@ def PCR3BP_propagator(S0, et0, deltat, prnt_out_dt, stop_fun, *params):
         except:
             pass
         options['Events'].terminal = True
-# ---------- SOLVE FOR THE TRAJECTORY WITH AN ODE45 INTEGRATOR ------------
+# ---------- SOLVE FOR THE TRAJECTORY WITH AN RK order 8 INTEGRATOR ------------
         sol = solve_ivp(derivs, (et0, etf),
-            state, t_eval = np.linspace(et0, etf, int(abs((etf-et0)/prnt_out_dt)) +1),
+            state, method = 'DOP853',
+            t_eval = np.linspace(et0, etf, int(abs((etf-et0)/prnt_out_dt)) +1),
             events = options['Events'],
             args = params,
             rtol = options['RelTol'],
