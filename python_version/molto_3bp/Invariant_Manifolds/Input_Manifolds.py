@@ -11,30 +11,30 @@ from Manifolds import Manifolds
 # Main Functionalities (expected string)
 # Type of orbit of interest, 'LY' == lyapunov orbit (2D)
 #                            'HL' == halo orbit (3D)
-type = 'LY'
+type = 'HL'
 
 # System analyzed
 # Accepted values: 'SE', 'EM'
-f = 'SE'
+f = 'EM'
 
 # Case choice (Orbital amplitude)
-Ax       = 1.2e-4 # Lyapunov Orbit characterization
+Ax       = 1.2e-3 # Lyapunov Orbit characterization
 
 Az       = 95e3 # Halo
-m        = 1    # Orbit
+m        = 3    # Orbit
 phi      = 0    # characterization
 
-LP       = 2    # 1 -> Lagrange point L1
+LP       = 1    # 1 -> Lagrange point L1
                 # 2 -> Lagrange point L2
 
-poincSec = 180   # Angle (in degrees) between the section required and
+poincSec = 0     # Angle (in degrees) between the section required and
                  # the +X semiplane taken from the 2nd primary
 
 # Numerical parameters
-npoints  = 3          # Number of points in the orbit to propagate manifolds from
+npoints  = 10         # Number of points in the orbit to propagate manifolds from
                       # The program propagates the perturbation in both directions
 
-prnt_out_dt = 0.01    # print time period
+prnt_out_dt = 0.001   # print time period
 
 # In order to introduce data from the exterior, the program expects a .txt input
 

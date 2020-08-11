@@ -37,12 +37,13 @@ def Manifolds(Data):
         from Halo_Orbits.Halo_Main import Halo_Main
         (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0, xL) =\
             Halo_Main(Data)
+        xL = xL[0]
         yL = 0
     else:
         raise Exception('Manifolds_Main:typeError.'+\
             '    The type selected is not valid [\'LY\'][\'HL\']!')
 
-    print('Constructing Manifolds...')
+    print('\nConstructing Manifolds...\n')
 
     ## 1.3 Construct manifolds
     npoints = Data['npoints'] # Number of iterations = npoints*2
@@ -77,7 +78,10 @@ def Manifolds(Data):
         inv_phi_0, Data['prnt_out_dt'], npoints, stop_fun, ang,
         xL)
 
-    print('Plotting manifolds')
+    for i in times_s:
+        print(len(i))
+
+    print('\nPlotting manifolds\n')
 
     ## 1.4 Plot manifolds
     plotm(Data['params'][0], Data['params'][1], [xL, yL], states_po,
