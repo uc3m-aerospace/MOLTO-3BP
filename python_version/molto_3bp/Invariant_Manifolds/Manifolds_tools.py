@@ -1,5 +1,5 @@
 def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
-    prnt_out_dt, npoints, stop_fun, ang, L):
+    prnt_out_dt, npoints, d, stop_fun, ang, L):
 
     #
     # Import required functions
@@ -14,8 +14,18 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
     et0  = 0
     eps  = 1e-7
     deltat = 5*T_po
-    sign   = np.array([-1, 1])
     veclen = len(states_po[:, 0])
+
+    if not d:
+        sign = np.array([-1, 1])
+    elif d == 1 or d == -1:
+        if veclen == 4:
+            sign = np.array([d])
+        else:
+            sign = np.array([-d])
+    else:
+        raise Exception('Manifolds_tools:dError.'+\
+            '    The direction selected is not valid [1, 0, -1]!')
 
     # Matrix initialization
     states_u = []
@@ -27,8 +37,11 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
 
     for i in range(npoints):
         for j in range(len(sign)):
+
+            print('Iteration: ' + str(len(sign)*i + j +1))
+
             x = states_po[:, idx[i]]
-            t = times_po[idx[i]]/100
+            t = times_po[idx[i]]/1000
             phi = np.zeros((veclen, veclen)) + 0.j
             for k in range(veclen):
                 phi[:, k] = eigvec[:, k]*np.exp(eigval[k]*t)
@@ -39,7 +52,7 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
             Ys = mon_eigvecs[:, 1] # stable eigenvector
 
             Xu = np.real(states_po[:, idx[i]] + eps*sign[j]*Yu)
-            Xs = np.real(states_po[:, idx[i]] + eps*sign[j]*Ys)
+            Xs = np.real(states_po[:, idx[i]] - eps*sign[j]*Ys)
 
             stop_fun.direction = -(L - params[0])
 
@@ -61,10 +74,49 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
             times_s.append(times)
             SF_s = np.append([SF_s], [SF])
 
-            print('Iteration: ' + str(2*i + j +1))
-
     return [states_s, times_s, SF_s.reshape(-1, veclen), states_u, times_u,
         SF_u.reshape(-1, veclen)]
+
+def fourierTest(mu1, mu2, pos, states_s, states_u, ang, Data):
+
+    import numpy as np
+    from scipy.fft import fft, fftfreq, fftshift
+    import matplotlib.pyplot as plt
+
+    signal_s = []
+    signal_u = []
+
+    for i in states_s:
+        if abs(i[-1, 1]) < abs(pos[0] - mu1):
+            if len(i[0, :-1]) % 2:
+                temp = fft(i[0, :-2]-mu1 + i[1, :-2]*1.j)
+                l = len(i[0, :-2])
+                signal_s.append(temp)
+            else:
+                temp = fft(i[0, :-1]-mu1 + i[1, :-1]*1.j)
+                l = len(i[0, :-1])
+                signal_s.append(temp)
+            xf = fftfreq(l, Data['prnt_out_dt'])
+            xf = fftshift(xf)
+            yf = fftshift(temp)
+            print([xf[abs(yf) > 0.01*max(abs(yf))],
+                100.0/l*yf[abs(yf) > 0.01*max(abs(yf))]])
+
+    for i in states_u:
+        if abs(i[-1, 1]) < abs(pos[0] - mu1):
+            if len(i[0, :-1]) % 2:
+                temp = fft(i[0, :-2]-mu1 + i[1, :-2]*1.j)
+                l = len(i[0, :-2])
+                signal_u.append(temp)
+            else:
+                temp = fft(i[0, :-1]-mu1 + i[1, :-1]*1.j)
+                l = len(i[0, :-1])
+                signal_u.append(temp)
+            xf = fftfreq(l, Data['prnt_out_dt'])
+            xf = fftshift(xf)
+            yf = fftshift(temp)
+            print([xf[abs(yf) > 0.01*max(abs(yf))],
+                100.0/l*yf[abs(yf) > 0.01*max(abs(yf))]])
 
 def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin):
 

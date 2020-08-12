@@ -19,6 +19,7 @@ def Lyapunov(Data):
 #
 # Import required functions
 #
+    import os
     import numpy as np
     import matplotlib.pyplot as plt
     from .Load_Variables import load_variables
@@ -29,9 +30,9 @@ def Lyapunov(Data):
 
     ## 0. Initialize General variables
     # CSpice package, Gravitational constants, Earth-Moon, and Sun-Earth constants
-    print('SE & EM Manifolds Test Cases Software')
+    print('Lyapunov Generator')
     if Data['mode'] not in ['SE', 'EM']:
-        raise Exception('Manifolds_Main:modeError.'+\
+        raise Exception('Lyapunov_Main:modeError.'+\
             '    The mode selected is not valid [\'SE\'][\'ME\']!')
 
     # Define parameters (input variable to compute manifolds)
@@ -182,7 +183,7 @@ def Lyapunov(Data):
     plt.show()
 
     # Save variables
-    fid = open('sample.txt', 'w')
+    fid = open("Lyapunov_Orbits" + os.sep + 'sample.txt', 'w')
     fid.write('# Stored Data from the Corrector algorithm in Lyapunov\n')
     fid.write('Orbital period: %.20f\n' % T_po)
     fid.write('# x0 \t\t\t\t\t y0 \t\t\t\t\t vx0 \t\t\t\t\t vy0\n')

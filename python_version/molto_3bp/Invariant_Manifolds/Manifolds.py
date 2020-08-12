@@ -9,7 +9,8 @@ def Manifolds(Data):
 
 ### 1. Orbit type (2D or 3D)
 #       1.1 Construct manifolds
-#       1.2 Plot manifolds
+#       1.2 Fourier analysis
+#       1.3 Plot manifolds
 
 ###########################################################################
 #
@@ -18,7 +19,7 @@ def Manifolds(Data):
     import numpy as np
     from PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
     from Crossing_Det import poinc_crossing
-    from Manifolds_tools import construct, plotm
+    from Manifolds_tools import construct, plotm, fourierTest
 
     ###########################################################################
 
@@ -45,10 +46,11 @@ def Manifolds(Data):
 
     print('\nConstructing Manifolds...\n')
 
-    ## 1.3 Construct manifolds
+    ## 1.1 Construct manifolds
     npoints = Data['npoints'] # Number of iterations = npoints*2
 
     stop_fun = poinc_crossing
+
 
     ang = Data['poincSec'] % 360
     if Data['LP'] -1:
@@ -75,14 +77,17 @@ def Manifolds(Data):
 
     [states_s, times_s, SF_s, states_u, times_u, SF_u] = construct(
         Data['params'], T_po, states_po, times_po, eigvec, eigval,
-        inv_phi_0, Data['prnt_out_dt'], npoints, stop_fun, ang,
+        inv_phi_0, Data['prnt_out_dt'], npoints, Data['d'], stop_fun, ang,
         xL)
 
-    for i in times_s:
-        print(len(i))
+    print('\nPost-processing Data...\n')
+
+    ## 1.2 Fourier analysis
+    fourierTest(Data['params'][0], Data['params'][1], [xL, yL],
+        states_s, states_u, ang, Data)
 
     print('\nPlotting manifolds\n')
 
-    ## 1.4 Plot manifolds
+    ## 1.3 Plot manifolds
     plotm(Data['params'][0], Data['params'][1], [xL, yL], states_po,
         states_s, SF_s, states_u, SF_u, ang, angmin)

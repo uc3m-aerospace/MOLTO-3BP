@@ -210,11 +210,12 @@ def Halo_Generator(Data):
             Halo_Num_Comp(Data)
         return (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0, xL)
     else:
+        import os
         text = '# Data Produced by Halo Generator #\n' + '# mode = ' + str(Data['mode']) +\
             '; LP = ' + str(Data['LP']) + '; m = ' + str(Data['m']) + '; phi = ' +\
             str(Data['phi']) + '; Az = ' + str(Data['Az']) + ';\n' +\
             'x0  = %.20f\n' % x0 + 'y0  = %.20f\n' % y0 + 'z0  = %.20f\n' % z0 +\
             'vx0 = %.20f\n' % vx0 + 'vy0 = %.20f\n' % vy0 + 'vz0 = %.20f\n' % vz0
-        fid = open('sample.txt','w')
+        fid = open('Halo_Orbits' + os.sep + 'sample.txt','w')
         fid.write(text)
         fid.close()

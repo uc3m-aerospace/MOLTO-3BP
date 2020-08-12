@@ -135,11 +135,12 @@ def Halo_Num_Comp(Data):
 
         return (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0)
     else:
+        import os
         text = '# Data Produced by Halo Numerical Computation #\n' + '# opt = ' +\
             str(Data['opt']) + '; LP = ' + str(Data['LP']) + '; m = ' +\
             str(Data['m']) + '; phi = ' + str(Data['phi']) + '; Az = ' +\
             str(Data['Az']) + ';\n' + 'x0  = %.20f\n' % x0 + 'z0  = %.20f\n' % z0 +\
             'vy0 = %.20f\n' % vy0
-        fid = open('sample.txt','w')
+        fid = open('Halo_Orbits' + os.sep + 'sample.txt','w')
         fid.write(text)
         fid.close()
