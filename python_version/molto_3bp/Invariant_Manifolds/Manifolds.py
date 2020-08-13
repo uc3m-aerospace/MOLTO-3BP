@@ -79,8 +79,8 @@ def Manifolds(Data):
 
         [states_s, times_s, SF_s, states_u, times_u, SF_u] = construct(
             Data['params'], T_po, states_po, times_po, eigvec, eigval,
-            inv_phi_0, Data['prnt_out_dt'], npoints, Data['d'], stop_fun, ang,
-            xL)
+            inv_phi_0, Data['prnt_out_dt'], npoints, Data['d'], Data['branch'],
+            stop_fun, ang, xL)
 
         print('\nPost-processing Data...\n')
 

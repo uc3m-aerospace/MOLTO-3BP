@@ -1,5 +1,5 @@
 def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
-    prnt_out_dt, npoints, d, stop_fun, ang, L):
+    prnt_out_dt, npoints, d, branch, stop_fun, ang, L):
 
     #
     # Import required functions
@@ -35,6 +35,20 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
     SF_s     = np.array([])
     times_s  = []
 
+    if not branch:
+        u = 1
+        s = 1
+    else:
+        if branch == 1:
+            s = 1
+            u = 0
+        elif branch == -1:
+            s = 0
+            u = 1
+        else:
+            raise Exception('Manifolds_tools:branchError.'+\
+                '    The branch selected is not valid [1, 0, -1]!')
+
     for i in range(npoints):
         for j in range(len(sign)):
 
@@ -48,31 +62,35 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
             Phi = phi * inv_phi_0
             [mon_eigvals, mon_eigvecs] = linalg.eig(Phi)
 
-            Yu = mon_eigvecs[:, 0] # unstable eigenvector
-            Ys = mon_eigvecs[:, 1] # stable eigenvector
+            if u:
+                Yu = mon_eigvecs[:, 0] # unstable eigenvector
 
-            Xu = np.real(states_po[:, idx[i]] + eps*sign[j]*Yu)
-            Xs = np.real(states_po[:, idx[i]] - eps*sign[j]*Ys)
+                Xu = np.real(states_po[:, idx[i]] + eps*sign[j]*Yu)
 
-            stop_fun.direction = -(L - params[0])
+                stop_fun.direction = -(L - params[0])
 
-            # Integrate unstable manifold forwards in time
-            [SF, etf_u, states, times] = PCR3BP_propagator(Xu, et0, deltat,
-                prnt_out_dt, stop_fun, params[0], params[1], ang, L)
+                # Integrate unstable manifold forwards in time
+                [SF, etf_u, states, times] = PCR3BP_propagator(Xu, et0, deltat,
+                    prnt_out_dt, stop_fun, params[0], params[1], ang, L)
 
-            states_u.append(states)
-            times_u.append(times)
-            SF_u = np.append([SF_u], [SF])
+                states_u.append(states)
+                times_u.append(times)
+                SF_u = np.append([SF_u], [SF])
 
-            stop_fun.direction = (L - params[0])
+            if s:
+                Ys = mon_eigvecs[:, 1] # stable eigenvector
 
-            # Integrate stable manifold backwards in time
-            [SF, etf, states, times] =  PCR3BP_propagator(Xs, et0, -deltat,
-                prnt_out_dt, stop_fun, params[0], params[1], ang, L)
+                Xs = np.real(states_po[:, idx[i]] - eps*sign[j]*Ys)
 
-            states_s.append(states)
-            times_s.append(times)
-            SF_s = np.append([SF_s], [SF])
+                stop_fun.direction = (L - params[0])
+
+                # Integrate stable manifold backwards in time
+                [SF, etf, states, times] =  PCR3BP_propagator(Xs, et0, -deltat,
+                    prnt_out_dt, stop_fun, params[0], params[1], ang, L)
+
+                states_s.append(states)
+                times_s.append(times)
+                SF_s = np.append([SF_s], [SF])
 
     return [states_s, times_s, SF_s.reshape(-1, veclen), states_u, times_u,
         SF_u.reshape(-1, veclen)]
@@ -140,12 +158,13 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
     ax1.plot([mu1, mu1 + abs(pos[0] - mu1)*np.cos(ang*np.pi/180)],
         [0, abs(pos[0] - mu1)*np.sin(ang*np.pi/180)], 'r--')
 
-    if len(SF_s[0]) == 4:
+    if len(states_po[:, 0]) == 4:
 
         fig2, ax2 = plt.subplots()
-        for i in range(len(states_u)):
-            ax2.plot(states_u[i][0], states_u[i][1], 'r')
-            ax2.plot(states_s[i][0], states_s[i][1], 'b')
+        for i_u in range(len(states_u)):
+            ax2.plot(states_u[i_u][0], states_u[i_u][1], 'r')
+        for i_s in range(len(states_s)):
+            ax2.plot(states_s[i_s][0], states_s[i_s][1], 'b')
         ax2.plot(mu1, 0 , 'ro')
         ax2.plot(pos[0], pos[1], 'ko')
         ax2.plot(states_po[0], states_po[1], 'k')
@@ -195,18 +214,19 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
                     ax3.plot(np.sqrt((SF_s[j, 0] - mu1)**2 + SF_s[j, 1]**2),
                         - np.sin(ang*np.pi/180)*SF_s[j, 2] + np.cos(ang*np.pi/180)*SF_s[j, 3],
                         'bo')
-                if abs(SF_u[j, 1]) < abs(pos[0]-mu1):
-                    ax3.plot(np.sqrt((SF_u[j, 0] - mu1)**2 + SF_u[j, 1]**2),
-                        - np.sin(ang*np.pi/180)*SF_u[j, 2] + np.cos(ang*np.pi/180)*SF_u[j, 3],
+            for k in range(len(SF_u)):
+                if abs(SF_u[k, 1]) < abs(pos[0]-mu1):
+                    ax3.plot(np.sqrt((SF_u[k, 0] - mu1)**2 + SF_u[k, 1]**2),
+                        - np.sin(ang*np.pi/180)*SF_u[k, 2] + np.cos(ang*np.pi/180)*SF_u[k, 3],
                         'ro')
 
             ax3.set(xlabel = 'Distance from 2nd primary')
             ax3.set(ylabel = 'Velocity normal to the plane')
             ax3.set(title = r'Poincaré section at angle %2.1f$^{\circ}$' % ang)
 
-        if s:
-            ax3.fill(xu[keyu], yu[keyu], facecolor = 'salmon')
         if u:
+            ax3.fill(xu[keyu], yu[keyu], facecolor = 'salmon')
+        if s:
             ax3.fill(xs[keys], ys[keys], facecolor = 'lightblue')
 
         plt.show()
@@ -215,9 +235,10 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
 
         fig2 = plt.figure()
         ax2 = Axes3D(fig2)
-        for i in range(len(states_u)):
-            ax2.plot(states_u[i][0], states_u[i][1], states_u[i][2], 'r')
-            ax2.plot(states_s[i][0], states_s[i][1], states_s[i][2], 'b')
+        for i_u in range(len(states_u)):
+            ax2.plot(states_u[i_u][0], states_u[i_u][1], states_u[i_u][2], 'r')
+        for i_s in range(len(states_s)):
+            ax2.plot(states_s[i_s][0], states_s[i_s][1], states_s[i_s][2], 'b')
         ax2.plot([mu1], [0], [0], 'ro')
         ax2.plot([pos[0]], [pos[1]], [0], 'ko')
         ax2.plot([mu1, mu1 + abs(pos[0] - mu1)*np.cos(ang*np.pi/180)],
@@ -286,10 +307,11 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
                         + SF_s[j, 2]**2), -np.sin(ang*np.pi/180)*SF_s[j, 3]\
                         + np.cos(ang*np.pi/180)*SF_s[j, 4],
                         'bo')
-                if abs(SF_u[j, 1]) < abs(pos[0]-mu1):
-                    ax3.plot(np.sqrt((SF_u[j, 0] - mu1)**2 + SF_u[j, 1]**2\
-                        + SF_u[j, 2]**2), -np.sin(ang*np.pi/180)*SF_u[j, 3]\
-                        + np.cos(ang*np.pi/180)*SF_u[j, 4],
+            for k in range(len(SF_u)):
+                if abs(SF_u[k, 1]) < abs(pos[0]-mu1):
+                    ax3.plot(np.sqrt((SF_u[k, 0] - mu1)**2 + SF_u[k, 1]**2\
+                        + SF_u[k, 2]**2), -np.sin(ang*np.pi/180)*SF_u[k, 3]\
+                        + np.cos(ang*np.pi/180)*SF_u[k, 4],
                         'ro')
 
             ax3.set(xlabel = 'Distance from 2nd primary')
