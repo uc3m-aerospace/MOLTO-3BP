@@ -44,12 +44,31 @@ def Halo_Plot(Data):
     phi0   = np.identity(6)
     q0[6:] = phi0.ravel()
 
-    sol = solve_ivp(DiffCorrection, [0, Data['tf']],
+    sol = solve_ivp(DiffCorrection, [0, Data['tf']/2],
         q0, args = (Data['mu'],),
         atol = 1e-15,
         rtol = 1e-10)
     q = sol.y
-    Phi = q[6:,-1].reshape(6, -1)
+    Phitemp = q[6:,-1].reshape(6, -1)
+
+    G = np.array([[1, 0, 0, 0, 0, 0],
+                [0, -1, 0, 0, 0, 0],
+                [0, 0, 1, 0, 0, 0],
+                [0, 0, 0, -1, 0, 0],
+                [0, 0, 0, 0, 1, 0],
+                [0, 0, 0, 0, 0, -1]])
+
+    I     = np.eye(3)
+    Z     = np.zeros((3, 3))
+    Omega = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 0]])
+
+    D = np.append(np.append(Z, -I, axis = 1),
+        np.append(I, -2*Omega, axis = 1), axis = 0)
+
+    E = np.append(np.append(-2*Omega, I, axis = 1),
+        np.append(-I, Z, axis = 1), axis = 0)
+
+    Phi = G * D * np.matrix.transpose(Phitemp) * E * G * Phitemp
 
     [eigval, eigvec] = linalg.eig(Phi)
     inv_phi_0        = linalg.inv(eigvec)
@@ -62,9 +81,8 @@ def Halo_Plot(Data):
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
-    plt.show()
 
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, constrained_layout = True)
+    fig2, (ax1, ax2, ax3) = plt.subplots(1, 3, constrained_layout = True)
     ax1.plot(x, y)
     ax1.set(xlabel='x', ylabel='y')
     ax2.plot(x, z)

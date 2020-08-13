@@ -27,19 +27,19 @@ m        = 3    # 1 -> Northern variant of the orbit
                 # 3 -> Southern variant of the orbit
 
 LP       = 1    # 1 -> Lagrange point L1
-                # 2 -> Lagrange point L24
+                # 2 -> Lagrange point L2
 
                 # Angle (in degrees) between the section required and
                 # the +X semiplane taken from the 2nd primary
-poincSec = np.array([0])
+poincSec = np.linspace(150, -150, 3)
 
 # Numerical parameters
 npoints  = 10   # Number of points in the orbit to propagate manifolds from
 d        = 1    # The program propagates the perturbation in the direction chosen
                 # both directions 0, interior realm 1, exterior realm -1
-                # Unexpected behavior on halo orbits
+                # Unexpected behaviour on halo orbits
 
-prnt_out_dt = 0.001   # print time period
+prnt_out_dt = 0.0001   # print time period
 
 # In order to introduce data from the exterior, the program expects a .txt input
 
