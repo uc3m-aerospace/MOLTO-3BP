@@ -206,9 +206,9 @@ def Halo_Generator(Data):
         Data['IC'] = np.array([x0, z0, vy0])
 
         from .Halo_Num_Comp import Halo_Num_Comp
-        (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0) =\
+        (states_po, times_po, T_po, eigvec, eigval, inv_phi_0) =\
             Halo_Num_Comp(Data)
-        return (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0, xL)
+        return (states_po, times_po, T_po, eigvec, eigval, inv_phi_0, xL)
     else:
         import os
         text = '# Data Produced by Halo Generator #\n' + '# mode = ' + str(Data['mode']) +\

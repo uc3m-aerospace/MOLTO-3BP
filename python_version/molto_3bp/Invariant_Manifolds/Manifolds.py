@@ -5,28 +5,34 @@ def Manifolds(Data):
 # This code is devoted to compute the invariant manifolds of any input orbit
 # It is divided in the following sections:
 
-### 0. Initialize Orbit family
+### 0. Initialize common variables
 
-### 1. Orbit type (2D or 3D)
-#       1.1 Construct manifolds
-#       1.2 Fourier analysis
-#       1.3 Plot manifolds
+### 1. Initialize Orbit family
+
+### 2. Orbit type (2D or 3D)
+#       2.1 Construct manifolds
+#       2.2 Fourier analysis
+#       2.3 Plot manifolds
 
 ###########################################################################
 #
 # Import required functions
 #
     import numpy as np
+    from Load_Variables import load_variables
     from PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
     from Crossing_Det import poinc_crossing
     from Manifolds_tools import construct, plotm, fourierTest
 
     ###########################################################################
 
-    ## 0. Orbit family
+    ## Initialize variables
+    Data = load_variables(Data)
+
+    ## 1. Orbit family
     if Data['type'] == 'LY':
         from Lyapunov_Orbits.Lyapunov import Lyapunov
-        (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0, pos) =\
+        (states_po, times_po, T_po, eigvec, eigval, inv_phi_0, pos) =\
             Lyapunov(Data)
         [xL, yL] = pos[Data['LP'] -1]
 
@@ -36,7 +42,7 @@ def Manifolds(Data):
         Data['nmax']  = 50
         Data['tol']   = 1e-15
         from Halo_Orbits.Halo_Main import Halo_Main
-        (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0, xL) =\
+        (states_po, times_po, T_po, eigvec, eigval, inv_phi_0, xL) =\
             Halo_Main(Data)
         xL = xL[0]
         yL = 0
@@ -44,7 +50,7 @@ def Manifolds(Data):
         raise Exception('Manifolds_Main:typeError.'+\
             '    The type selected is not valid [\'LY\'][\'HL\']!')
 
-    ## 1.1 Construct manifolds
+    ## 2.1 Construct manifolds
     npoints = Data['npoints'] # Number of iterations = npoints*2
 
     stop_fun = poinc_crossing
@@ -84,12 +90,12 @@ def Manifolds(Data):
 
         print('\nPost-processing Data...\n')
 
-        ## 1.2 Fourier analysis
+        ## 2.2 Fourier analysis
         fourierTest(Data['params'][0], Data['params'][1], [xL, yL],
             states_s, states_u, ang, Data)
 
         print('\nPlotting manifolds\n')
 
-        ## 1.3 Plot manifolds
+        ## 2.3 Plot manifolds
         plotm(Data['params'][0], Data['params'][1], [xL, yL], states_po,
             states_s, SF_s, states_u, SF_u, ang, angmin)

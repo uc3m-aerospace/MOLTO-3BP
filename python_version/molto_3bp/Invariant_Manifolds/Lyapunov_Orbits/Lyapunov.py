@@ -22,28 +22,12 @@ def Lyapunov(Data):
     import os
     import numpy as np
     import matplotlib.pyplot as plt
-    from .Load_Variables import load_variables
     from .IC_statemat import IC_statemat
     from .Lagrange import lagrange_points, plot_lagrange_points
     from .PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
     from .Corrector import Corrector
 
-    ## 0. Initialize General variables
-    # CSpice package, Gravitational constants, Earth-Moon, and Sun-Earth constants
-    print('Lyapunov Generator')
-    if Data['mode'] not in ['SE', 'EM']:
-        raise Exception('Lyapunov_Main:modeError.'+\
-            '    The mode selected is not valid [\'SE\'][\'ME\']!')
-
-    # Define parameters (input variable to compute manifolds)
-    print('Loading Variables and kernels...')
-    [params_EM, params_SE] = load_variables()
-
-    # These parameters are called by PCR3BP_state_derivs
-    if Data['mode'] == 'SE':
-        Data['params'] = (params_SE['mu1'], params_SE['mu2'])
-    else:
-        Data['params'] = (params_EM['mu1'], params_EM['mu2'])
+    print('Lyapunov Generator\n')
 
     ###########################################################################
     ## 1. SE or EM SYSTEM
@@ -55,9 +39,9 @@ def Lyapunov(Data):
 
     # Plot Lagrange points
     plot_lagrange_points(Data['params'][0], Data['params'][1], pos)
-    # Select L2 point
+    # Select L point
     Lpoint = Data['LP'] -1
-    # xe = position in x of L2
+    # xe = position in x of L
     xe = pos[Lpoint, 0]
 
     ## 1.2 Computation of periodic orbits around Libration (Lagrange) points
@@ -191,4 +175,4 @@ def Lyapunov(Data):
         states_po[1, 0], states_po[2, 0], states_po[3, 0]))
     fid.close()
 
-    return (Data, states_po, times_po, T_po, eigvec, eigval, inv_phi_0, pos)
+    return (states_po, times_po, T_po, eigvec, eigval, inv_phi_0, pos)

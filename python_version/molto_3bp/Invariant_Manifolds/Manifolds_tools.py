@@ -19,10 +19,7 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
     if not d:
         sign = np.array([-1, 1])
     elif d == 1 or d == -1:
-        if veclen == 4:
-            sign = np.array([d])
-        else:
-            sign = np.array([-d])
+        sign = np.array([-d])
     else:
         raise Exception('Manifolds_tools:dError.'+\
             '    The direction selected is not valid [1, 0, -1]!')
@@ -54,16 +51,8 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
 
             print('Iteration: ' + str(len(sign)*i + j +1))
 
-            x = states_po[:, idx[i]]
-            t = times_po[idx[i]]/1000
-            phi = np.zeros((veclen, veclen)) + 0.j
-            for k in range(veclen):
-                phi[:, k] = eigvec[:, k]*np.exp(eigval[k]*t)
-            Phi = phi * inv_phi_0
-            [mon_eigvals, mon_eigvecs] = linalg.eig(Phi)
-
             if u:
-                Yu = mon_eigvecs[:, 0] # unstable eigenvector
+                Yu = eigvec[:, 0] # unstable eigenvector
 
                 Xu = np.real(states_po[:, idx[i]] + eps*sign[j]*Yu)
 
@@ -78,9 +67,9 @@ def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
                 SF_u = np.append([SF_u], [SF])
 
             if s:
-                Ys = mon_eigvecs[:, 1] # stable eigenvector
+                Ys = eigvec[:, 1] # stable eigenvector
 
-                Xs = np.real(states_po[:, idx[i]] - eps*sign[j]*Ys)
+                Xs = np.real(states_po[:, idx[i]] + eps*sign[j]*Ys)
 
                 stop_fun.direction = (L - params[0])
 
@@ -104,17 +93,19 @@ def fourierTest(mu1, mu2, pos, states_s, states_u, ang, Data):
     signal_s = []
     signal_u = []
 
-    fig1, ax1 = plt.subplots()
-    fig2, ax2 = plt.subplots()
+    fig1, ax1   = plt.subplots()
+    fig12, ax12 = plt.subplots()
+    fig2, ax2   = plt.subplots()
+    fig22, ax22   = plt.subplots()
 
     for i in states_s:
         if abs(i[-1, 1]) < abs(pos[0] - mu1):
             if len(i[0, :-1]) % 2:
-                temp = fft(i[0, :-2]-mu1 + i[1, :-2]*1.j)
+                temp = fft(i[0, :-2]-pos[0] + i[1, :-2]*1.j)
                 l = len(i[0, :-2])
                 signal_s.append(temp)
             else:
-                temp = fft(i[0, :-1]-mu1 + i[1, :-1]*1.j)
+                temp = fft(i[0, :-1]-pos[0] + i[1, :-1]*1.j)
                 l = len(i[0, :-1])
                 signal_s.append(temp)
             xf = fftfreq(l, Data['prnt_out_dt'])
@@ -122,15 +113,17 @@ def fourierTest(mu1, mu2, pos, states_s, states_u, ang, Data):
             yf = fftshift(temp)
             ax1.plot(xf[abs(yf) > 0.01*max(abs(yf))],
                 100.0/l*np.real(yf[abs(yf) > 0.01*max(abs(yf))]))
+            ax12.plot(xf[abs(yf) > 0.01*max(abs(yf))],
+                100.0/l*np.imag(yf[abs(yf) > 0.01*max(abs(yf))]))
 
     for i in states_u:
         if abs(i[-1, 1]) < abs(pos[0] - mu1):
             if len(i[0, :-1]) % 2:
-                temp = fft(i[0, :-2]-mu1 + i[1, :-2]*1.j)
+                temp = fft(i[0, :-2]-pos[0] + i[1, :-2]*1.j)
                 l = len(i[0, :-2])
                 signal_u.append(temp)
             else:
-                temp = fft(i[0, :-1]-mu1 + i[1, :-1]*1.j)
+                temp = fft(i[0, :-1]-pos[0] + i[1, :-1]*1.j)
                 l = len(i[0, :-1])
                 signal_u.append(temp)
             xf = fftfreq(l, Data['prnt_out_dt'])
@@ -138,6 +131,8 @@ def fourierTest(mu1, mu2, pos, states_s, states_u, ang, Data):
             yf = fftshift(temp)
             ax2.plot(xf[abs(yf) > 0.01*max(abs(yf))],
                 100.0/l*np.real(yf[abs(yf) > 0.01*max(abs(yf))]))
+            ax22.plot(xf[abs(yf) > 0.01*max(abs(yf))],
+                100.0/l*np.imag(yf[abs(yf) > 0.01*max(abs(yf))]))
     plt.show()
 
 def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin):
@@ -323,4 +318,4 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
             if u:
                 ax3.fill(xu[keyu], yu[keyu], facecolor = 'salmon')
 
-            plt.show()
+        plt.show()

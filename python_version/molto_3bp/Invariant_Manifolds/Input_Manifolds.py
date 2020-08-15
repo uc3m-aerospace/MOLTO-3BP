@@ -25,13 +25,12 @@ Az       = 100e3 # Halo Orbit characterization
 phi      = 0
 m        = 3    # 1 -> Northern variant of the orbit
                 # 3 -> Southern variant of the orbit
-
 LP       = 1    # 1 -> Lagrange point L1
                 # 2 -> Lagrange point L2
 
+poincSec = np.linspace(150, -150, 3)
                 # Angle (in degrees) between the section required and
                 # the +X semiplane taken from the 2nd primary
-poincSec = np.linspace(150, -150, 3)
 
 # Numerical parameters
 npoints  = 10   # Number of points in the orbit to propagate manifolds from

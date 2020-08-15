@@ -1,9 +1,3 @@
-def x_crossing(et, state, mu1, mu2):
-    return state[1]
-
-def y_crossing(et, state, mu1, mu2):
-    return state[0]
-
 def poinc_crossing(et, state, mu1, mu2, ang, L):
 
     import numpy as np
