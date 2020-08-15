@@ -8,8 +8,7 @@ def Lyapunov(Data):
 ### 0. Initialize General variables
 
 ### 1. SE or EM system
-#       1.1 Lagrange Points
-#       1.2 Computation of periodic orbits around Libration (Lagrange) points
+#       1.1 Computation of periodic orbits around Libration (Lagrange) points
 #           a) Obtain the initial conditions in the periodic orbit
 #           b) Numerically integrate these initial conditions to obtain such
 #               periodic orbit
@@ -23,7 +22,6 @@ def Lyapunov(Data):
     import numpy as np
     import matplotlib.pyplot as plt
     from .IC_statemat import IC_statemat
-    from .Lagrange import lagrange_points, plot_lagrange_points
     from .PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
     from .Corrector import Corrector
 
@@ -33,18 +31,13 @@ def Lyapunov(Data):
     ## 1. SE or EM SYSTEM
     # (Construct periodic orbits function)
 
-    ## 1.1 Lagrange Points
-    guess = np.array([0.9, 1.01, -1])
-    pos   = lagrange_points(Data['params'][1], guess) # Returns, x and y coordinates of L points
-
-    # Plot Lagrange points
-    plot_lagrange_points(Data['params'][0], Data['params'][1], pos)
+    # xe = position in x of L
     # Select L point
     Lpoint = Data['LP'] -1
-    # xe = position in x of L
-    xe = pos[Lpoint, 0]
 
-    ## 1.2 Computation of periodic orbits around Libration (Lagrange) points
+    xe = Data['pos'][Lpoint, 0]
+
+    ## 1.1 Computation of periodic orbits around Libration (Lagrange) points
     # a)Obtain the initial conditions in the periodic orbit
     # b)Numerically integrate these initial conditions to obtain such periodic orbit
     # c)Apply a differential correction algorithm
@@ -67,7 +60,7 @@ def Lyapunov(Data):
                 # This value says that the initial position is on the x axis,
                 # at distance x0 from the libration point
 
-    [x0, y0, vx0, vy0, eigvec, eigval, inv_phi_0] = IC_statemat(Ax, a, b)
+    [x0, y0, vx0, vy0, eigvec] = IC_statemat(Ax, a, b)
 
     ## b) PCR3BP propagator: This function propagates the state of a S/C
     # according to the PBR3BP.
@@ -129,7 +122,7 @@ def Lyapunov(Data):
 
         # X0 are the corrected IC and T0 is the corrected period
         # T0            # Corrected period
-        Ax = X0[0]-xe   # Distance to L2 corrected
+        Ax = X0[0]-xe   # Distance to L point corrected
 
         if (T0 < 1 or abs(Ax) > abs(Ax_tgt_mid) or T0 > T0_old*2):
             X0  = X0_old
@@ -159,7 +152,7 @@ def Lyapunov(Data):
     # Plot corrected orbit
     fig, ax = plt.subplots()
     ax.plot(states_po[0], states_po[1])
-    ax.plot(pos[Lpoint,0], pos[Lpoint,1], 'k*')
+    ax.plot(Data['pos'][Lpoint,0], Data['pos'][Lpoint,1], 'k*')
     plt.title('Corrected Orbit in the Synodic ref. frame')
     plt.xlabel('Distance from baricenter in nondimensional coordinates')
     plt.ylabel('Distance perpendicular to the line of primaries')
@@ -175,4 +168,4 @@ def Lyapunov(Data):
         states_po[1, 0], states_po[2, 0], states_po[3, 0]))
     fid.close()
 
-    return (states_po, times_po, T_po, eigvec, eigval, inv_phi_0, pos)
+    return (states_po, times_po, T_po, eigvec)

@@ -21,7 +21,7 @@ f = 'EM'
 # Case choice (Orbital amplitude)
 Ax       = 1.2e-3 # Lyapunov Orbit characterization
 
-Az       = 100e3 # Halo Orbit characterization
+Az       = 250e3 # Halo Orbit characterization
 phi      = 0
 m        = 3    # 1 -> Northern variant of the orbit
                 # 3 -> Southern variant of the orbit

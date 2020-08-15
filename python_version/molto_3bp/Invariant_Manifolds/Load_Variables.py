@@ -2,8 +2,10 @@ def load_variables(Data):
     #
     # Import required functions
     #
+    import numpy as np
     import spiceypy as spice
     from kernels.Load_Kernels import load_kernels
+    from Lagrange import lagrange_points, plot_lagrange_points
 
     ## Load Spice kernels
     load_kernels()
@@ -31,5 +33,13 @@ def load_variables(Data):
             The specified mode is outside range: [\'SE\', \'EM\']!')
 
     Data['params'] = (1-Data['mu'], Data['mu'])
+
+    guess = np.array([0.9, 1.01, -1])
+
+    # Returns, x and y coordinates of L points
+    Data['pos']    = lagrange_points(Data['params'][1], guess)
+
+    # Plot Lagrange points
+    plot_lagrange_points(Data['params'][0], Data['params'][1], Data['pos'])
 
     return Data

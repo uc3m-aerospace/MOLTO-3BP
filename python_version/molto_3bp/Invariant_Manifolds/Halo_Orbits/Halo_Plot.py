@@ -52,7 +52,6 @@ def Halo_Plot(Data):
     Phi = q[6:,-1].reshape(6, -1)
 
     [eigval, eigvec] = linalg.eig(Phi)
-    inv_phi_0        = linalg.inv(eigvec)
 
     # Figures
 
@@ -72,4 +71,4 @@ def Halo_Plot(Data):
     ax3.set(xlabel='y', ylabel='z')
     plt.show()
 
-    return (states_po, times_po, Data['tf'], eigvec, eigval, inv_phi_0)
+    return (states_po, times_po, Data['tf'], eigvec)

@@ -26,15 +26,15 @@ def Manifolds(Data):
 
     ###########################################################################
 
+    print('\nManifolds Propagator Software\n')
+
     ## Initialize variables
     Data = load_variables(Data)
 
     ## 1. Orbit family
     if Data['type'] == 'LY':
         from Lyapunov_Orbits.Lyapunov import Lyapunov
-        (states_po, times_po, T_po, eigvec, eigval, inv_phi_0, pos) =\
-            Lyapunov(Data)
-        [xL, yL] = pos[Data['LP'] -1]
+        (states_po, times_po, T_po, eigvec) = Lyapunov(Data)
 
     elif Data['type'] == 'HL':
         Data['flags'] = [1, 1, 1]
@@ -42,10 +42,8 @@ def Manifolds(Data):
         Data['nmax']  = 50
         Data['tol']   = 1e-15
         from Halo_Orbits.Halo_Main import Halo_Main
-        (states_po, times_po, T_po, eigvec, eigval, inv_phi_0, xL) =\
-            Halo_Main(Data)
-        xL = xL[0]
-        yL = 0
+        (states_po, times_po, T_po, eigvec) = Halo_Main(Data)
+
     else:
         raise Exception('Manifolds_Main:typeError.'+\
             '    The type selected is not valid [\'LY\'][\'HL\']!')
@@ -84,18 +82,18 @@ def Manifolds(Data):
         print('Poincaré section angle = %3.1f' % ang)
 
         [states_s, times_s, SF_s, states_u, times_u, SF_u] = construct(
-            Data['params'], T_po, states_po, times_po, eigvec, eigval,
-            inv_phi_0, Data['prnt_out_dt'], npoints, Data['d'], Data['branch'],
-            stop_fun, ang, xL)
+            Data['params'], T_po, states_po, times_po, eigvec,
+            Data['prnt_out_dt'], npoints, Data['d'], Data['branch'],
+            stop_fun, ang, Data['pos'][Data['LP'] -1][0])
 
         print('\nPost-processing Data...\n')
 
         ## 2.2 Fourier analysis
-        fourierTest(Data['params'][0], Data['params'][1], [xL, yL],
+        fourierTest(Data['params'][0], Data['params'][1], Data['pos'][Data['LP'] -1],
             states_s, states_u, ang, Data)
 
         print('\nPlotting manifolds\n')
 
         ## 2.3 Plot manifolds
-        plotm(Data['params'][0], Data['params'][1], [xL, yL], states_po,
-            states_s, SF_s, states_u, SF_u, ang, angmin)
+        plotm(Data['params'][0], Data['params'][1], Data['pos'][Data['LP'] -1],
+            states_po, states_s, SF_s, states_u, SF_u, ang, angmin)

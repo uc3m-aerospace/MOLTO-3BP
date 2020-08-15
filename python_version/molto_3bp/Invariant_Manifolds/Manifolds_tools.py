@@ -1,4 +1,4 @@
-def construct(params, T0, states_po, times_po, eigvec, eigval, inv_phi_0,
+def construct(params, T0, states_po, times_po, eigvec,
     prnt_out_dt, npoints, d, branch, stop_fun, ang, L):
 
     #
