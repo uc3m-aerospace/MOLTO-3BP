@@ -1,7 +1,7 @@
 ###########################################################################
 # MANIFOLDS TEST CASES
-# The example consists on a pair of manifolds intersecting around the L2 point
-# in the Sun - Earth + Moon system.
+# Use this sheet as format for the study of a single type of orbit
+# For sequential analysis proceed to set input_seq = True
 ###########################################################################
 #
 # Import functions required
@@ -19,13 +19,13 @@ type = 'LY'
 f = 'EM'
 
 # Case choice (Orbital amplitude)
-Ax       = 1.2e-3 # Lyapunov Orbit characterization
+Ax       = 2.5e-3 # Lyapunov Orbit characterization
 
 Az       = 250e3 # Halo Orbit characterization
 phi      = 0
 m        = 3    # 1 -> Northern variant of the orbit
                 # 3 -> Southern variant of the orbit
-LP       = 1    # 1 -> Lagrange point L1
+LP       = 2    # 1 -> Lagrange point L1
                 # 2 -> Lagrange point L2
 
 poincSec = np.linspace(150, -150, 3)
@@ -33,22 +33,27 @@ poincSec = np.linspace(150, -150, 3)
                 # the +X semiplane taken from the 2nd primary
 
 # Numerical parameters
-npoints  = 10   # Number of points in the orbit to propagate manifolds from
+npoints  = 2    # Number of points in the orbit to propagate manifolds from
 
 d        = 1    # The program propagates the perturbation in the direction chosen
                 # both directions 0, interior realm 1, exterior realm -1
                 # Unexpected behaviour on halo orbits
 
-branch   = 0    # Propagation of stable branch, unstable one or both
+branch   = 1    # Propagation of stable branch, unstable one or both
                 # both branches 0, unstable branch -1, stable branch 1
 
 prnt_out_dt = 0.001   # print time period
+
+input_seq = 1   # Sets the program to evaluate a mission from orbit 1 .. n
+                # Following intersections in 1 .. n Poincaré sections
+                # The only values overwritten by this parameter are the case
+                # choice variables and d and branch parameters to create the chain
 
 # In order to introduce data from the exterior, the program expects a .txt input
 
 # Combining all input data into a single data structure
 Input = {'type': type, 'mode': f, 'Ax_tgt': Ax, 'Az': Az, 'm': m, 'phi': phi,
     'LP': LP, 'poincSec': poincSec, 'npoints': npoints, 'd': d, 'branch': branch,
-    'prnt_out_dt': prnt_out_dt}
+    'prnt_out_dt': prnt_out_dt, 'input_seq': input_seq}
 
 Manifolds(Input)

@@ -130,9 +130,9 @@ def Halo_Num_Comp(Data):
         Data['tf'] = t[-1]*2
 
         from .Halo_Plot import Halo_Plot
-        (states_po, times_po, T_po, eigvec) = Halo_Plot(Data)
+        (states_po, T_po, eigvec) = Halo_Plot(Data)
 
-        return (states_po, times_po, T_po, eigvec)
+        return (states_po, T_po, eigvec)
     else:
         import os
         text = '# Data Produced by Halo Numerical Computation #\n' + '# opt = ' +\

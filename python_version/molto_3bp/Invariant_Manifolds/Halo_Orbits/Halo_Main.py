@@ -11,9 +11,9 @@ def Halo_Main(Input):
     if Input['flags'][0]:
         from .Halo_Generator import Halo_Generator
         if sum(Input['flags']) == 3:
-            (states_po, times_po, T_po, eigvec) =\
+            (states_po, T_po, eigvec) =\
                 Halo_Generator(Input)
-            return (states_po, times_po, T_po, eigvec)
+            return (states_po, T_po, eigvec)
         else:
             Halo_Generator(Input)
     else:

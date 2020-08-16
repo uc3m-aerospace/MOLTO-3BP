@@ -53,10 +53,7 @@ def Lyapunov(Data):
     if Data['mode'] == 'SE':
         Ax = -1e-4*np.sign(xe - Data['params'][0])  # Non dimensional distance
     else:
-        if Lpoint:
-            Ax = -2e-3
-        else:
-            Ax = 1e-3
+        Ax = -1e-3*np.sign(xe - Data['params'][0])
                 # This value says that the initial position is on the x axis,
                 # at distance x0 from the libration point
 
@@ -168,4 +165,4 @@ def Lyapunov(Data):
         states_po[1, 0], states_po[2, 0], states_po[3, 0]))
     fid.close()
 
-    return (states_po, times_po, T_po, eigvec)
+    return (states_po, T_po, eigvec)

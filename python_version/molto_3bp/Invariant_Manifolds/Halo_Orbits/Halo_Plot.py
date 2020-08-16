@@ -71,4 +71,4 @@ def Halo_Plot(Data):
     ax3.set(xlabel='y', ylabel='z')
     plt.show()
 
-    return (states_po, times_po, Data['tf'], eigvec)
+    return (states_po, Data['tf'], eigvec)

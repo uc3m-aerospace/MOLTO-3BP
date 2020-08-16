@@ -1,5 +1,4 @@
-def construct(params, T0, states_po, times_po, eigvec,
-    prnt_out_dt, npoints, d, branch, stop_fun, ang, L):
+def construct(params, Orbit, prnt_out_dt, npoints, d, branch, stop_fun, ang, L):
 
     #
     # Import required functions
@@ -9,12 +8,11 @@ def construct(params, T0, states_po, times_po, eigvec,
     from PCR3BP import PCR3BP_propagator
 
     ## Computation of invariant manifolds
-    T_po = T0
-    idx  = np.linspace(0, len(times_po), npoints, endpoint = False, dtype = int)
+    idx  = np.linspace(0, len(Orbit[0][0]), npoints, endpoint = False, dtype = int)
     et0  = 0
     eps  = 1e-7
-    deltat = 5*T_po
-    veclen = len(states_po[:, 0])
+    deltat = 5 * Orbit[1]
+    veclen = len(Orbit[0][:, 0])
 
     if not d:
         sign = np.array([-1, 1])
@@ -52,9 +50,12 @@ def construct(params, T0, states_po, times_po, eigvec,
             print('Iteration: ' + str(len(sign)*i + j +1))
 
             if u:
-                Yu = eigvec[:, 0] # unstable eigenvector
+                Yu = Orbit[2][:, 0] # unstable eigenvector
 
-                Xu = np.real(states_po[:, idx[i]] + eps*sign[j]*Yu)
+                if L > params[0] and idx[i] > int(len(idx)/2):
+                    Xu = np.real(Orbit[0][:, idx[i]] - eps*sign[j]*Yu)
+                else:
+                    Xu = np.real(Orbit[0][:, idx[i]] + eps*sign[j]*Yu)
 
                 stop_fun.direction = -(L - params[0])
 
@@ -67,9 +68,12 @@ def construct(params, T0, states_po, times_po, eigvec,
                 SF_u = np.append([SF_u], [SF])
 
             if s:
-                Ys = eigvec[:, 1] # stable eigenvector
+                Ys = Orbit[2][:, 1] # stable eigenvector
 
-                Xs = np.real(states_po[:, idx[i]] + eps*sign[j]*Ys)
+                if (L > params[0] and idx[i] > int(len(idx)/2)) or L < params[0]:
+                    Xs = np.real(Orbit[0][:, idx[i]] + eps*sign[j]*Ys)
+                else:
+                    Xs = np.real(Orbit[0][:, idx[i]] - eps*sign[j]*Ys)
 
                 stop_fun.direction = (L - params[0])
 
@@ -144,7 +148,16 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
     fig1, ax1 = plt.subplots()
     ax1.plot(mu1, 0, 'ko')
     ax1.plot(pos[0], pos[1], 'ko')
-    ax1.plot(states_po[0], states_po[1], 'k')
+
+    if type(states_po[0]) is list:
+        ax1.plot(states_po[0], states_po[1], 'k')
+        size = len(states_po[:, 0])
+    else:
+        ax1.plot(states_po[0][0][0], states_po[0][0][1], 'k')
+        if len(states_po) == 2:
+            ax1.plot(states_po[1][0][0], states_po[1][0][1], 'k')
+            ax1.plot(pos[2], pos[3], 'ko')
+        size = len(states_po[0][0][:, 0])
 
     ax1.plot([mu1, mu1 + 1.25*abs(pos[0] - mu1)*np.cos(angmin)],
         [0, 1.25*abs(pos[0] - mu1)*np.sin(angmin)], 'g--')
@@ -153,7 +166,7 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
     ax1.plot([mu1, mu1 + abs(pos[0] - mu1)*np.cos(ang*np.pi/180)],
         [0, abs(pos[0] - mu1)*np.sin(ang*np.pi/180)], 'r--')
 
-    if len(states_po[:, 0]) == 4:
+    if size == 4:
 
         fig2, ax2 = plt.subplots()
         for i_u in range(len(states_u)):
@@ -162,7 +175,13 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
             ax2.plot(states_s[i_s][0], states_s[i_s][1], 'b')
         ax2.plot(mu1, 0 , 'ro')
         ax2.plot(pos[0], pos[1], 'ko')
-        ax2.plot(states_po[0], states_po[1], 'k')
+        if type(states_po[0]) is list:
+            ax2.plot(states_po[0], states_po[1], 'k')
+        else:
+            ax2.plot(states_po[0][0][0], states_po[0][0][1], 'k')
+            if len(states_po) == 2:
+                ax2.plot(states_po[1][0][0], states_po[1][0][1], 'k')
+                ax2.plot(pos[2], pos[3], 'ko')
         ax2.plot([mu1, mu1 + abs(pos[0] - mu1)*np.cos(ang*np.pi/180)],
             [0, abs(pos[0] - mu1)*np.sin(ang*np.pi/180)], 'y--')
 
