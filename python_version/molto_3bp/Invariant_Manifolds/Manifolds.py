@@ -82,7 +82,7 @@ def Manifolds(Data):
                 break
 
             ang = Sequence['ang' + str(j)] % 360
-            
+
             if Sequence['LP' + str(j)] -1:
                 angmin = min(np.arctan2(orbitDef[j-1][0][1], orbitDef[j-1][0][0]\
                     - Data['params'][0]))
@@ -181,4 +181,4 @@ def Manifolds(Data):
 
             ## 2.3 Plot manifolds
             plotm(Data['params'][0], Data['params'][1], Data['pos'][Data['LP'] -1],
-                orbitDef[0], states_s, SF_s, states_u, SF_u, ang, angmin)
+                orbitDef, states_s, SF_s, states_u, SF_u, ang, angmin)

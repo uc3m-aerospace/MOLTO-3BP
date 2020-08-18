@@ -19,32 +19,32 @@ type = 'LY'
 f = 'EM'
 
 # Case choice (Orbital amplitude)
-Ax       = 2.5e-3 # Lyapunov Orbit characterization
+Ax       = 1.15e-3 # Lyapunov Orbit characterization
 
-Az       = 250e3 # Halo Orbit characterization
+Az       = 200e3 # Halo Orbit characterization
 phi      = 0
 m        = 3    # 1 -> Northern variant of the orbit
                 # 3 -> Southern variant of the orbit
-LP       = 2    # 1 -> Lagrange point L1
+LP       = 1    # 1 -> Lagrange point L1
                 # 2 -> Lagrange point L2
 
-poincSec = np.linspace(150, -150, 3)
+poincSec = np.array([0])
                 # Angle (in degrees) between the section required and
                 # the +X semiplane taken from the 2nd primary
 
 # Numerical parameters
-npoints  = 2    # Number of points in the orbit to propagate manifolds from
+npoints  = 10   # Number of points in the orbit to propagate manifolds from
 
-d        = 1    # The program propagates the perturbation in the direction chosen
+d        = 0    # The program propagates the perturbation in the direction chosen
                 # both directions 0, interior realm 1, exterior realm -1
                 # Unexpected behaviour on halo orbits
 
-branch   = 1    # Propagation of stable branch, unstable one or both
+branch   = 0    # Propagation of stable branch, unstable one or both
                 # both branches 0, unstable branch -1, stable branch 1
 
 prnt_out_dt = 0.001   # print time period
 
-input_seq = 1   # Sets the program to evaluate a mission from orbit 1 .. n
+input_seq = 0   # Sets the program to evaluate a mission from orbit 1 .. n
                 # Following intersections in 1 .. n Poincaré sections
                 # The only values overwritten by this parameter are the case
                 # choice variables and d and branch parameters to create the chain

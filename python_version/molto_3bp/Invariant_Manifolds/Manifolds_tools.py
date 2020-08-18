@@ -149,15 +149,14 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
     ax1.plot(mu1, 0, 'ko')
     ax1.plot(pos[0], pos[1], 'ko')
 
-    if type(states_po[0]) is list:
-        ax1.plot(states_po[0], states_po[1], 'k')
-        size = len(states_po[:, 0])
-    else:
+    if len(states_po) == 2:
         ax1.plot(states_po[0][0][0], states_po[0][0][1], 'k')
-        if len(states_po) == 2:
-            ax1.plot(states_po[1][0][0], states_po[1][0][1], 'k')
-            ax1.plot(pos[2], pos[3], 'ko')
+        ax1.plot(states_po[1][0][0], states_po[1][0][1], 'k')
+        ax1.plot(pos[2], pos[3], 'ko')
         size = len(states_po[0][0][:, 0])
+    else:
+        ax1.plot(states_po[0][0], states_po[0][1], 'k')
+        size = len(states_po[0][:, 0])
 
     ax1.plot([mu1, mu1 + 1.25*abs(pos[0] - mu1)*np.cos(angmin)],
         [0, 1.25*abs(pos[0] - mu1)*np.sin(angmin)], 'g--')
@@ -175,13 +174,14 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
             ax2.plot(states_s[i_s][0], states_s[i_s][1], 'b')
         ax2.plot(mu1, 0 , 'ro')
         ax2.plot(pos[0], pos[1], 'ko')
-        if type(states_po[0]) is list:
-            ax2.plot(states_po[0], states_po[1], 'k')
+        if len(states_po) == 2:
+            ax1.plot(states_po[0][0][0], states_po[0][0][1], 'k')
+            ax1.plot(states_po[1][0][0], states_po[1][0][1], 'k')
+            ax1.plot(pos[2], pos[3], 'ko')
+            size = len(states_po[0][0][:, 0])
         else:
-            ax2.plot(states_po[0][0][0], states_po[0][0][1], 'k')
-            if len(states_po) == 2:
-                ax2.plot(states_po[1][0][0], states_po[1][0][1], 'k')
-                ax2.plot(pos[2], pos[3], 'ko')
+            ax1.plot(states_po[0][0], states_po[0][1], 'k')
+            size = len(states_po[0][:, 0])
         ax2.plot([mu1, mu1 + abs(pos[0] - mu1)*np.cos(ang*np.pi/180)],
             [0, abs(pos[0] - mu1)*np.sin(ang*np.pi/180)], 'y--')
 
