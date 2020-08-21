@@ -10,14 +10,16 @@ def construct(params, Orbit, prnt_out_dt, npoints, d, branch, stop_fun, ang, L):
     ## Computation of invariant manifolds
     idx  = np.linspace(0, len(Orbit[0][0]), npoints, endpoint = False, dtype = int)
     et0  = 0
-    eps  = 1e-7
     deltat = 5 * Orbit[1]
     veclen = len(Orbit[0][:, 0])
 
     if not d:
         sign = np.array([-1, 1])
     elif d == 1 or d == -1:
-        sign = np.array([-d])
+        if veclen == 6 and L > params[0]:
+            sign = np.array([d])
+        else:
+            sign = np.array([-d])
     else:
         raise Exception('Manifolds_tools:dError.'+\
             '    The direction selected is not valid [1, 0, -1]!')
@@ -44,6 +46,11 @@ def construct(params, Orbit, prnt_out_dt, npoints, d, branch, stop_fun, ang, L):
             raise Exception('Manifolds_tools:branchError.'+\
                 '    The branch selected is not valid [1, 0, -1]!')
 
+    if veclen == 4:
+        eps = 1e-7
+    else:
+        eps = 1e-4
+
     for i in range(npoints):
         for j in range(len(sign)):
 
@@ -52,10 +59,10 @@ def construct(params, Orbit, prnt_out_dt, npoints, d, branch, stop_fun, ang, L):
             if u:
                 Yu = Orbit[2][:, 0] # unstable eigenvector
 
-                if L > params[0] and idx[i] > int(len(idx)/2):
-                    Xu = np.real(Orbit[0][:, idx[i]] - eps*sign[j]*Yu)
-                else:
+                if veclen == 6 or L > params[0]:
                     Xu = np.real(Orbit[0][:, idx[i]] + eps*sign[j]*Yu)
+                else:
+                    Xu = np.real(Orbit[0][:, idx[i]] - eps*sign[j]*Yu)
 
                 stop_fun.direction = -(L - params[0])
 
@@ -70,10 +77,7 @@ def construct(params, Orbit, prnt_out_dt, npoints, d, branch, stop_fun, ang, L):
             if s:
                 Ys = Orbit[2][:, 1] # stable eigenvector
 
-                if (L > params[0] and idx[i] > int(len(idx)/2)) or L < params[0]:
-                    Xs = np.real(Orbit[0][:, idx[i]] + eps*sign[j]*Ys)
-                else:
-                    Xs = np.real(Orbit[0][:, idx[i]] - eps*sign[j]*Ys)
+                Xs = np.real(Orbit[0][:, idx[i]] - eps*sign[j]*Ys)
 
                 stop_fun.direction = (L - params[0])
 

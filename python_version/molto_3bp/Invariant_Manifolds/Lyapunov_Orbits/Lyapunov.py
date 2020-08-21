@@ -57,7 +57,7 @@ def Lyapunov(Data):
                 # This value says that the initial position is on the x axis,
                 # at distance x0 from the libration point
 
-    [x0, y0, vx0, vy0, eigvec] = IC_statemat(Ax, a, b)
+    [x0, y0, vx0, vy0] = IC_statemat(Ax, a, b)
 
     ## b) PCR3BP propagator: This function propagates the state of a S/C
     # according to the PBR3BP.
@@ -114,7 +114,7 @@ def Lyapunov(Data):
 
         print('Ax = %10.5e & Ax target = %10.5e' % (abs(Ax), abs(Ax_tgt)))
 
-        [X0, T0, Error, Floquet] = Corrector(PCR3BP_state_derivs, S0, Data['params'],
+        [X0, T0, Error, eigvec] = Corrector(PCR3BP_state_derivs, S0, Data['params'],
             T0, Itmax, Tol, TolRel, TolAbs, dh, Ind_Fix)
 
         # X0 are the corrected IC and T0 is the corrected period

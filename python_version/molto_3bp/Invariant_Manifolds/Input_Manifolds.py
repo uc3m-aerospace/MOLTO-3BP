@@ -12,30 +12,30 @@ import numpy as np
 # Main Functionalities (expected string)
 # Type of orbit of interest, 'LY' == lyapunov orbit (2D)
 #                            'HL' == halo orbit (3D)
-type = 'LY'
+type = 'HL'
 
 # System analyzed
 # Accepted values: 'SE', 'EM'
 f = 'EM'
 
 # Case choice (Orbital amplitude)
-Ax       = 1.15e-3 # Lyapunov Orbit characterization
+Ax       = 1.05e-3 # Lyapunov Orbit characterization
 
-Az       = 200e3 # Halo Orbit characterization
+Az       = 110e3 # Halo Orbit characterization
 phi      = 0
-m        = 3    # 1 -> Northern variant of the orbit
+m        = 1    # 1 -> Northern variant of the orbit
                 # 3 -> Southern variant of the orbit
-LP       = 1    # 1 -> Lagrange point L1
+LP       = 2    # 1 -> Lagrange point L1
                 # 2 -> Lagrange point L2
 
-poincSec = np.array([0])
+poincSec = np.array([180])
                 # Angle (in degrees) between the section required and
                 # the +X semiplane taken from the 2nd primary
 
 # Numerical parameters
-npoints  = 10   # Number of points in the orbit to propagate manifolds from
+npoints  = 20   # Number of points in the orbit to propagate manifolds from
 
-d        = 0    # The program propagates the perturbation in the direction chosen
+d        = 1    # The program propagates the perturbation in the direction chosen
                 # both directions 0, interior realm 1, exterior realm -1
                 # Unexpected behaviour on halo orbits
 

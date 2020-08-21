@@ -14,4 +14,4 @@ def IC_statemat(Ax, a, b):
     vx0 = x0/Mat*(eigvec[2,2] + eigvec[2,3])
     vy0 = x0/Mat*(eigvec[3,2] + eigvec[3,3])
 
-    return [x0, y0, vx0, vy0, eigvec]
+    return [x0, y0, vx0, vy0]

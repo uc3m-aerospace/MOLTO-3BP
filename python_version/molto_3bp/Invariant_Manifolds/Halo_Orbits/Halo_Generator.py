@@ -155,12 +155,11 @@ def Halo_Generator(Data):
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     ax.set_zlabel('z')
-    plt.show()
 
     # 1 orbit display
 
     tdim = t*Tconversion
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, constrained_layout = True)
+    fig2, (ax1, ax2, ax3) = plt.subplots(1, 3, constrained_layout = True)
     ax1.plot(x[tdim<T], y[tdim<T])
     ax1.plot(0,0,'bx')
     ax1.plot(xL,0,'ro')
@@ -174,9 +173,9 @@ def Halo_Generator(Data):
     ax3.plot(0,0,'ro')
     ax3.set(xlabel='y', ylabel='z')
     if Data['m'] == 1:
-        fig.suptitle('Class I  Orbit  (L' + str(Data['LP']) +')')
+        fig2.suptitle('Class I  Orbit  (L' + str(Data['LP']) +')')
     else:
-        fig.suptitle('Class II  Orbit  (L' + str(Data['LP']) +')')
+        fig2.suptitle('Class II  Orbit  (L' + str(Data['LP']) +')')
     plt.show()
 
     # # Displays

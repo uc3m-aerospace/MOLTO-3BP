@@ -76,7 +76,7 @@ def Corrector(Fun, x0, params, t0, Itmax, Tol, TolRel, TolAbs, dh, Ind_Fix):
             error = max(abs(x[:, 0] - x[:, -1]))
             print('Corrector: iteration = ' + str(i) + '  Error = %10.5e' % error)
 
-    return [x0, t0, error, Floquet]
+    return [x0, t0, error, vec]
 
 def variational(t, YV, mu1, mu2, Fun, N, dh):
 

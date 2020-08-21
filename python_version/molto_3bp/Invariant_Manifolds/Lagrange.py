@@ -38,6 +38,9 @@ def plot_lagrange_points(mu1, mu2, pos):
 
     moon_orbit = circle(-mu2, 0, 1)
     plt.plot(moon_orbit[:, 0], moon_orbit[:, 1], 'k--')
+    plt.title('Lagrange points location with respect to primaries')
+    plt.xlabel('x Coordinate (synodic reference frame)')
+    plt.ylabel('y Coordinate (synodic reference frame)')
     plt.show()
 
 def circle(x, y, r):
