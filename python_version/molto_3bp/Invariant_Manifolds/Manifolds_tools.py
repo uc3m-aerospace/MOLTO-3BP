@@ -105,42 +105,79 @@ def fourierTest(mu1, mu2, pos, states_s, states_u, ang, Data):
     fig12, ax12 = plt.subplots()
     fig2, ax2   = plt.subplots()
     fig22, ax22   = plt.subplots()
+    fig3, ax3   = plt.subplots()
+    fig32, ax32   = plt.subplots()
 
-    for i in states_s:
-        if abs(i[-1, 1]) < abs(pos[0] - mu1):
-            if len(i[0, :-1]) % 2:
-                temp = fft(i[0, :-2]-pos[0] + i[1, :-2]*1.j)
-                l = len(i[0, :-2])
-                signal_s.append(temp)
+    if len(states_s):
+        for i in states_s:
+            if abs(i[-1, 1]) < abs(pos[0] - mu1):
+                if len(i[0, :0:-1]) % 2:
+                    temp = fft(i[0, :1:-1]-pos[0] + i[1, :1:-1]*1.j)
+                    l = len(i[0, :1:-1])
+                    signal_s.append(temp)
+                else:
+                    temp = fft(i[0, :0:-1]-pos[0] + i[1, :0:-1]*1.j)
+                    l = len(i[0, :0:-1])
+                    signal_s.append(temp)
+                xf = fftfreq(l, Data['prnt_out_dt'])
+                xf = fftshift(xf)
+                yf = fftshift(temp)
+                ax1.plot(xf[abs(yf) > 0.01*max(abs(yf))],
+                    100.0/l*np.real(yf[abs(yf) > 0.01*max(abs(yf))]))
+                ax12.plot(xf[abs(yf) > 0.01*max(abs(yf))],
+                    100.0/l*np.imag(yf[abs(yf) > 0.01*max(abs(yf))]))
+
+    if len(states_u):
+        for i in states_u:
+            if abs(i[-1, 1]) < abs(pos[0] - mu1):
+                if len(i[0, :-1]) % 2:
+                    temp = fft(i[0, :-2]-pos[0] + i[1, :-2]*1.j)
+                    l = len(i[0, :-2])
+                    signal_u.append(temp)
+                else:
+                    temp = fft(i[0, :-1]-pos[0] + i[1, :-1]*1.j)
+                    l = len(i[0, :-1])
+                    signal_u.append(temp)
+                xf = fftfreq(l, Data['prnt_out_dt'])
+                xf = fftshift(xf)
+                yf = fftshift(temp)
+                ax2.plot(xf[abs(yf) > 0.01*max(abs(yf))],
+                    100.0/l*np.real(yf[abs(yf) > 0.01*max(abs(yf))]))
+                ax22.plot(xf[abs(yf) > 0.01*max(abs(yf))],
+                    100.0/l*np.imag(yf[abs(yf) > 0.01*max(abs(yf))]))
+
+    if len(states_u) and len(states_s) and Data['d'] == 1:
+        for i in range(len(states_s)):
+            if len(states_s[i][0, :-1]) % 2:
+                vecx1 = states_s[i][0, :1:-1]
+                vecy1 = states_s[i][1, :1:-1]
             else:
-                temp = fft(i[0, :-1]-pos[0] + i[1, :-1]*1.j)
-                l = len(i[0, :-1])
-                signal_s.append(temp)
+                vecx1 = states_s[i][0, :0:-1]
+                vecy1 = states_s[i][1, :0:-1]
+
+            if len(states_u[i][0, :-1]) % 2:
+                vecx2 = states_u[i][0, :-2]
+                vecy2 = states_u[i][1, :-2]
+            else:
+                vecx2 = states_u[i][0, :-1]
+                vecy2 = states_u[i][1, :-1]
+
+            vecx = np.append(vecx1, vecx2)
+            vecy = np.append(vecy1, vecy2)
+
+            temp = fft(vecx-pos[0] + vecy*1.j)
+            l = len(vecx)
+
+            signal_s.append(temp)
+
             xf = fftfreq(l, Data['prnt_out_dt'])
             xf = fftshift(xf)
             yf = fftshift(temp)
-            ax1.plot(xf[abs(yf) > 0.01*max(abs(yf))],
+            ax3.plot(xf[abs(yf) > 0.01*max(abs(yf))],
                 100.0/l*np.real(yf[abs(yf) > 0.01*max(abs(yf))]))
-            ax12.plot(xf[abs(yf) > 0.01*max(abs(yf))],
+            ax32.plot(xf[abs(yf) > 0.01*max(abs(yf))],
                 100.0/l*np.imag(yf[abs(yf) > 0.01*max(abs(yf))]))
 
-    for i in states_u:
-        if abs(i[-1, 1]) < abs(pos[0] - mu1):
-            if len(i[0, :-1]) % 2:
-                temp = fft(i[0, :-2]-pos[0] + i[1, :-2]*1.j)
-                l = len(i[0, :-2])
-                signal_u.append(temp)
-            else:
-                temp = fft(i[0, :-1]-pos[0] + i[1, :-1]*1.j)
-                l = len(i[0, :-1])
-                signal_u.append(temp)
-            xf = fftfreq(l, Data['prnt_out_dt'])
-            xf = fftshift(xf)
-            yf = fftshift(temp)
-            ax2.plot(xf[abs(yf) > 0.01*max(abs(yf))],
-                100.0/l*np.real(yf[abs(yf) > 0.01*max(abs(yf))]))
-            ax22.plot(xf[abs(yf) > 0.01*max(abs(yf))],
-                100.0/l*np.imag(yf[abs(yf) > 0.01*max(abs(yf))]))
     plt.show()
 
 def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin):

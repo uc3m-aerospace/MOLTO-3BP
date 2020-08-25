@@ -1,4 +1,10 @@
-# Stored Data from the Corrector algorithm in Lyapunov
-Orbital period: 2.69187368107759850133
-# x0 					 y0 					 vx0 					 vy0
-  0.83810839486317645353 0.00063501373700393165 0.00039985752466389733 -0.00989731296483432541
+# Example of text data introduction
+Ax1 = 1.15e-3
+LP1 = 1
+ang1 = -90
+# Comments like this are allowed only if the line starts with a #
+# but the structure should be preserved.
+# Note that the names of the variables and the equals
+# are written for illustrative purposes, they are not needed
+Ax2 = 1.05e-3
+LP2 = 2

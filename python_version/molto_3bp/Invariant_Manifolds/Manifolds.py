@@ -19,7 +19,7 @@ def Manifolds(Data):
 # Import required functions
 #
     import numpy as np
-    from Sequential import queryFunc
+    from Sequential import queryFunc, queryFunctext
     from Load_Variables import load_variables
     from PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
     from Crossing_Det import poinc_crossing
@@ -30,8 +30,14 @@ def Manifolds(Data):
     print('\nManifolds Propagator Software\n')
 
     if Data['input_seq']:
-        Sequence = queryFunc()
-        print(Sequence)
+        if not Data['text']:
+            Sequence = queryFunc()
+            print('\n')
+            print(Sequence)
+        else:
+            Sequence = queryFunctext(Data)
+            print('\n')
+            print(Sequence)
 
     ## Initialize variables
     Data = load_variables(Data)
