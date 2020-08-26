@@ -184,6 +184,7 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
 
     import matplotlib.pyplot as plt
     from mpl_toolkits.mplot3d import Axes3D
+    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
     import numpy as np
 
     fig1, ax1 = plt.subplots()
@@ -194,10 +195,10 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
         ax1.plot(states_po[0][0][0], states_po[0][0][1], 'k')
         ax1.plot(states_po[1][0][0], states_po[1][0][1], 'k')
         ax1.plot(pos[2], pos[3], 'ko')
-        size = len(states_po[0][0][:, 0])
+        size = [len(states_po[0][0][:, 0]), len(states_po[1][0][:, 0])]
     else:
         ax1.plot(states_po[0][0], states_po[0][1], 'k')
-        size = len(states_po[0][:, 0])
+        size = [len(states_po[0][:, 0])]
 
     ax1.plot([mu1, mu1 + 1.25*abs(pos[0] - mu1)*np.cos(angmin)],
         [0, 1.25*abs(pos[0] - mu1)*np.sin(angmin)], 'g--')
@@ -206,7 +207,7 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
     ax1.plot([mu1, mu1 + abs(pos[0] - mu1)*np.cos(ang*np.pi/180)],
         [0, abs(pos[0] - mu1)*np.sin(ang*np.pi/180)], 'r--')
 
-    if size == 4:
+    if max(size) == 4:
 
         fig2, ax2 = plt.subplots()
         for i_u in range(len(states_u)):
@@ -219,10 +220,8 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
             ax1.plot(states_po[0][0][0], states_po[0][0][1], 'k')
             ax1.plot(states_po[1][0][0], states_po[1][0][1], 'k')
             ax1.plot(pos[2], pos[3], 'ko')
-            size = len(states_po[0][0][:, 0])
         else:
             ax1.plot(states_po[0][0], states_po[0][1], 'k')
-            size = len(states_po[0][:, 0])
         ax2.plot([mu1, mu1 + abs(pos[0] - mu1)*np.cos(ang*np.pi/180)],
             [0, abs(pos[0] - mu1)*np.sin(ang*np.pi/180)], 'y--')
 
@@ -290,12 +289,40 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
 
         fig2 = plt.figure()
         ax2 = Axes3D(fig2)
-        for i_u in range(len(states_u)):
-            ax2.plot(states_u[i_u][0], states_u[i_u][1], states_u[i_u][2], 'r')
-        for i_s in range(len(states_s)):
-            ax2.plot(states_s[i_s][0], states_s[i_s][1], states_s[i_s][2], 'b')
-        ax2.plot([mu1], [0], [0], 'ro')
-        ax2.plot([pos[0]], [pos[1]], [0], 'ko')
+        if size[0] == 4:
+            for i_u in range(len(states_u)):
+                ax2.plot(states_u[i_u][0], states_u[i_u][1], [0], 'r')
+            for i_s in range(len(states_s)):
+                ax2.plot(states_s[i_s][0], states_s[i_s][1], states_s[i_s][2], 'b')
+            ax2.plot([mu1], [0], [0], 'ro')
+            ax2.plot([pos[0]], [pos[1]], [0], 'ko')
+            ax2.plot([pos[2]], [pos[3]], [0], 'ko')
+            ax2.plot(states_po[0][0][0], states_po[0][0][1], [0], 'k')
+            ax2.plot(states_po[1][0][0], states_po[1][0][1], states_po[1][0][2], 'k')
+
+        elif size[-1] == 4:
+            for i_u in range(len(states_u)):
+                ax2.plot(states_u[i_u][0], states_u[i_u][1], states_u[i_u][2], 'r')
+            for i_s in range(len(states_s)):
+                ax2.plot(states_s[i_s][0], states_s[i_s][1], [0], 'b')
+            ax2.plot([mu1], [0], [0], 'ro')
+            ax2.plot([pos[0]], [pos[1]], [0], 'ko')
+            ax2.plot([pos[2]], [pos[3]], [0], 'ko')
+            ax2.plot(states_po[0][0][0], states_po[0][0][1], states_po[0][0][2], 'k')
+            ax2.plot(states_po[1][0][0], states_po[1][0][1], [0], 'k')
+        else:
+            for i_u in range(len(states_u)):
+                ax2.plot(states_u[i_u][0], states_u[i_u][1], states_u[i_u][2], 'r')
+            for i_s in range(len(states_s)):
+                ax2.plot(states_s[i_s][0], states_s[i_s][1], states_s[i_s][2], 'b')
+            ax2.plot([mu1], [0], [0], 'ro')
+            ax2.plot([pos[0]], [pos[1]], [0], 'ko')
+            if len(states_po) == 2:
+                ax2.plot(states_po[0][0][0], states_po[0][0][1], states_po[0][0][2], 'k')
+                ax2.plot(states_po[1][0][0], states_po[1][0][1], states_po[1][0][2], 'k')
+                ax2.plot([pos[2]], [pos[3]], [0], 'ko')
+            else:
+                ax2.plot(states_po[0][0], states_po[0][1], states_po[0][2], 'k')
         ax2.plot([mu1, mu1 + abs(pos[0] - mu1)*np.cos(ang*np.pi/180)],
             [0, abs(pos[0] - mu1)*np.sin(ang*np.pi/180)],
             [abs(pos[0] - mu1)/2, abs(pos[0] - mu1)/2], 'y--')
@@ -317,65 +344,83 @@ def plotm(mu1, mu2, pos, states_po, states_s, SF_s, states_u, SF_u, ang, angmin)
         s = 0
 
         if len(SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), :]) > 0:
-            tangVels1 = max(abs(np.cos(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 3]\
-                + np.sin(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 4]))
-            print('Max Vt1 (stable manifold):   %1.5f' % tangVels1)
-            tangVels2 = max(abs(SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 5]))
-            print('Max Vt2 (stable manifold):   %1.5f' % tangVels2)
+            if size[-1] == 4:
+                tangVels1 = max(abs(np.cos(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 2]\
+                    + np.sin(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 3]))
+                print('Max Vt1 (stable manifold):   %1.5f' % tangVels1)
+                tangVels2 = 0.00000
+                print('Max Vt2 (stable manifold):   %1.5f' % tangVels2)
 
-            xs = np.sqrt((SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 0] - mu1)**2\
-                + SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 1]**2\
-                + SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 2]**2)
-            ys = - np.sin(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 3]\
-                + np.cos(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 4]
-
-            centers = [np.mean(xs), np.mean(ys)]
-            atans   = np.arctan2(ys - centers[1], xs - centers[0])
-            keys    = np.argsort(atans)
+            else:
+                tangVels1 = max(abs(np.cos(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 3]\
+                    + np.sin(ang*np.pi/180)*SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 4]))
+                print('Max Vt1 (stable manifold):   %1.5f' % tangVels1)
+                tangVels2 = max(abs(SF_s[abs(SF_s[:, 1]) < abs(pos[0]-mu1), 5]))
+                print('Max Vt2 (stable manifold):   %1.5f' % tangVels2)
 
             s = 1
 
         if len(SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), :]) > 0:
-            tangVelu1 = max(abs(np.cos(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 3]\
-                + np.sin(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 4]))
-            print('Max Vt1 (unstable manifold): %1.5f' % tangVelu1)
-            tangVelu2 = max(abs(SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 5]))
-            print('Max Vt2 (unstable manifold): %1.5f' % tangVelu2)
+            if size[0] == 4:
+                tangVelu1 = max(abs(np.cos(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 2]\
+                    + np.sin(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 3]))
+                print('Max Vt1 (unstable manifold): %1.5f' % tangVelu1)
+                tangVelu2 = 0.00000
+                print('Max Vt2 (unstable manifold): %1.5f' % tangVelu2)
 
-            xu = np.sqrt((SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 0] - mu1)**2\
-                + SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 1]**2\
-                + SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 2]**2)
-            yu = - np.sin(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 3]\
-                + np.cos(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 4]
-
-            centeru = [np.mean(xu), np.mean(yu)]
-            atanu   = np.arctan2(yu - centeru[1], xu - centeru[0])
-            keyu    = np.argsort(atanu)
+            else:
+                tangVelu1 = max(abs(np.cos(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 3]\
+                    + np.sin(ang*np.pi/180)*SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 4]))
+                print('Max Vt1 (unstable manifold): %1.5f' % tangVelu1)
+                tangVelu2 = max(abs(SF_u[abs(SF_u[:, 1]) < abs(pos[0]-mu1), 5]))
+                print('Max Vt2 (unstable manifold): %1.5f' % tangVelu2)
 
             u = 1
 
         if u or s:
-            fig3, ax3 = plt.subplots()
-            for j in range(len(SF_s)):
-                if abs(SF_s[j, 1]) < abs(pos[0]-mu1):
-                    ax3.plot(np.sqrt((SF_s[j, 0] - mu1)**2 + SF_s[j, 1]**2\
-                        + SF_s[j, 2]**2), -np.sin(ang*np.pi/180)*SF_s[j, 3]\
-                        + np.cos(ang*np.pi/180)*SF_s[j, 4],
-                        'bo')
-            for k in range(len(SF_u)):
-                if abs(SF_u[k, 1]) < abs(pos[0]-mu1):
-                    ax3.plot(np.sqrt((SF_u[k, 0] - mu1)**2 + SF_u[k, 1]**2\
-                        + SF_u[k, 2]**2), -np.sin(ang*np.pi/180)*SF_u[k, 3]\
-                        + np.cos(ang*np.pi/180)*SF_u[k, 4],
-                        'ro')
+            fig3 = plt.figure()
+            ax3 = Axes3D(fig3)
+            if size[0] == 4:
+                for j in range(len(SF_s)):
+                    if abs(SF_s[j, 1]) < abs(pos[0]-mu1):
+                        ax3.plot([np.sqrt((SF_s[j, 0] - mu1)**2 + SF_s[j, 1]**2)],
+                            [SF_s[j, 2]],
+                            [-np.sin(ang*np.pi/180)*SF_s[j, 3] + np.cos(ang*np.pi/180)*SF_s[j, 4]],
+                            'bo')
+                for k in range(len(SF_u)):
+                    if abs(SF_u[k, 1]) < abs(pos[0]-mu1):
+                        ax3.plot([np.sqrt((SF_u[k, 0] - mu1)**2 + SF_u[k, 1]**2)], [0],
+                            [-np.sin(ang*np.pi/180)*SF_u[k, 2] + np.cos(ang*np.pi/180)*SF_u[k, 3]],
+                            'ro')
+            elif size[-1] == 4:
+                for j in range(len(SF_s)):
+                    if abs(SF_s[j, 1]) < abs(pos[0]-mu1):
+                        ax3.plot([np.sqrt((SF_s[j, 0] - mu1)**2 + SF_s[j, 1]**2)], [0],
+                            [-np.sin(ang*np.pi/180)*SF_s[j, 2] + np.cos(ang*np.pi/180)*SF_s[j, 3]],
+                            'bo')
+                for k in range(len(SF_u)):
+                    if abs(SF_u[k, 1]) < abs(pos[0]-mu1):
+                        ax3.plot([np.sqrt((SF_u[k, 0] - mu1)**2 + SF_u[k, 1]**2)],
+                            [SF_u[k, 2]],
+                            [-np.sin(ang*np.pi/180)*SF_u[k, 3] + np.cos(ang*np.pi/180)*SF_u[k, 4]],
+                            'ro')
+            else:
+                for j in range(len(SF_s)):
+                    if abs(SF_s[j, 1]) < abs(pos[0]-mu1):
+                        ax3.plot([np.sqrt((SF_s[j, 0] - mu1)**2 + SF_s[j, 1]**2)],
+                            [SF_s[j, 2]],
+                            [-np.sin(ang*np.pi/180)*SF_s[j, 3] + np.cos(ang*np.pi/180)*SF_s[j, 4]],
+                            'bo')
+                for k in range(len(SF_u)):
+                    if abs(SF_u[k, 1]) < abs(pos[0]-mu1):
+                        ax3.plot([np.sqrt((SF_u[k, 0] - mu1)**2 + SF_u[k, 1]**2)],
+                            [SF_u[k, 2]],
+                            [-np.sin(ang*np.pi/180)*SF_u[k, 3] + np.cos(ang*np.pi/180)*SF_u[k, 4]],
+                            'ro')
 
-            ax3.set(xlabel = 'Distance from 2nd primary')
-            ax3.set(ylabel = 'Velocity normal to the plane')
+            ax3.set(xlabel = 'Distance from 2nd primary (xy)')
+            ax3.set(ylabel = 'Distance from 2nd primary (z)')
+            ax3.set(zlabel = 'Velocity normal to the plane')
             ax3.set(title  = r'Poincaré section at angle %2.1f$^{\circ}$' % ang)
-
-            if s:
-                ax3.fill(xs[keys], ys[keys], facecolor = 'lightblue')
-            if u:
-                ax3.fill(xu[keyu], yu[keyu], facecolor = 'salmon')
 
         plt.show()

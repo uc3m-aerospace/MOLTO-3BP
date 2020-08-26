@@ -8,11 +8,30 @@ def queryFunc():
     while 1:
 
         print('\nParameters for Orbit ' + str(seq['it']))
-        Ax = input('Amplitude (Ax, nondimensional): ')
-        LP = input('Lagrange Point [1, 2]: ')
 
-        seq['Ax' + str(seq['it'])] = float(Ax)
-        seq['LP' + str(seq['it'])] = int(LP)
+        seq['type' + str(seq['it'])] = input('Orbit type [HL, LY]: ')
+
+        if seq['type' + str(seq['it'])] == 'LY':
+            Ax = input('Amplitude (Ax, nondimensional): ')
+            LP = input('Lagrange Point [1, 2]: ')
+
+            seq['Ax' + str(seq['it'])] = float(Ax)
+            seq['LP' + str(seq['it'])] = int(LP)
+
+        elif seq['type' + str(seq['it'])] == 'HL':
+            Az  = input('Amplitude (Az, dimensional [km]): ')
+            phi = input('Azimuthal rotation [rads]: ')
+            m   = input('North/South variants of the orbit [1, 3]: ')
+            LP  = input('Lagrange Point [1, 2]: ')
+
+            seq['Az' + str(seq['it'])]  = float(Az)
+            seq['phi' + str(seq['it'])] = float(phi)
+            seq['m' + str(seq['it'])]   = int(m)
+            seq['LP' + str(seq['it'])]  = int(LP)
+
+        else:
+            raise Exception('Manifolds_Seq:typeError.'+\
+                '    The type selected is not valid [\'LY\'][\'HL\']!')
 
         key = input('\nWould you like to add a section? (1 == yes, 0 == no): ')
 
@@ -20,7 +39,7 @@ def queryFunc():
             break
 
         print('\nParameters for Section ' + str(seq['it']))
-        ang = input('Angle between section and +X semiplane: ')
+        ang = input('Angle between section and +X semiplane [degrees]: ')
 
         seq['ang' + str(seq['it'])] = int(ang)
 
@@ -47,24 +66,57 @@ def queryFunctext(Input):
             refdata.append(i)
 
     data = [data[j] for j in refdata]
+    line = 0
 
     while 1:
 
-        Ax = data[3*seq['it']-3].split()[-1]
-        LP = data[3*seq['it']-2].split()[-1]
+        seq['type' + str(seq['it'])] = data[line].split()[-1]
 
-        seq['Ax' + str(seq['it'])] = float(Ax)
-        seq['LP' + str(seq['it'])] = int(LP)
+        if seq['type' + str(seq['it'])] == 'LY':
+            Ax = data[line +1].split()[-1]
+            LP = data[line +2].split()[-1]
 
-        if len(data) == 3*seq['it']-1:
-            break
+            seq['Ax' + str(seq['it'])] = float(Ax)
+            seq['LP' + str(seq['it'])] = int(LP)
 
-        ang = data[3*seq['it']-1].split()[-1]
+            if len(data) == line +3:
+                break
 
-        seq['ang' + str(seq['it'])] = int(ang)
+            ang = data[line +3].split()[-1]
 
-        if len(data) == 3*seq['it']:
-            break
+            seq['ang' + str(seq['it'])] = int(ang)
+
+            if len(data) == line +4:
+                break
+
+            line = line +4
+
+        elif seq['type' + str(seq['it'])] == 'HL':
+            Az  = data[line +1].split()[-1]
+            phi = data[line +2].split()[-1]
+            m   = data[line +3].split()[-1]
+            LP  = data[line +4].split()[-1]
+
+            seq['Az' + str(seq['it'])]  = float(Az)
+            seq['phi' + str(seq['it'])] = float(phi)
+            seq['m' + str(seq['it'])]   = int(m)
+            seq['LP' + str(seq['it'])]  = int(LP)
+
+            if len(data) == line +5:
+                break
+
+            ang = data[line +5].split()[-1]
+
+            seq['ang' + str(seq['it'])] = int(ang)
+
+            if len(data) == line +6:
+                break
+
+            line = line +6
+
+        else:
+            raise Exception('Manifolds_Seq:typeError.'+\
+                '    The type selected is not valid [\'LY\'][\'HL\']!')
 
         seq['it'] = seq['it'] +1
 

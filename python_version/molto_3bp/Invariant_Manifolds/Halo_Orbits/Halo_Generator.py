@@ -13,7 +13,7 @@ def Halo_Generator(Data):
     else:
         print('\nCR3BP: EARTH-MOON SYSTEM')
 
-    t  = tspan = np.linspace(0, Data['tf'], int(Data['tf']/Data['prnt_out_dt']) +1)
+    t = np.linspace(0, Data['tf'], int(Data['tf']/Data['prnt_out_dt']) +1)
         # s <-- Propagation time
 
     Tconversion = Data['TSE']/(2*np.pi)

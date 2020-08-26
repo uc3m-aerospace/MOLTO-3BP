@@ -29,6 +29,10 @@ def Manifolds(Data):
 
     print('\nManifolds Propagator Software\n')
 
+    ## Initialize variables
+    Data = load_variables(Data)
+
+    ## 1. Orbit family
     if Data['input_seq']:
         if not Data['text']:
             Sequence = queryFunc()
@@ -39,37 +43,47 @@ def Manifolds(Data):
             print('\n')
             print(Sequence)
 
-    ## Initialize variables
-    Data = load_variables(Data)
-
-    ## 1. Orbit family
-    if Data['type'] == 'LY':
         from Lyapunov_Orbits.Lyapunov import Lyapunov
+        from Halo_Orbits.Halo_Main import Halo_Main
 
-        if Data['input_seq']:
-            orbitDef = []
-
-            for i in range(1, Sequence['it'] +1):
-
-                print('\nEvaluating Orbit ' + str(i))
-
-                Data['Ax_tgt'] = Sequence['Ax' + str(i)]
-                Data['LP']     = Sequence['LP' + str(i)]
-                orbitDef.append(Lyapunov(Data))
-        else:
-            orbitDef = Lyapunov(Data)
-
-    elif Data['type'] == 'HL':
         Data['flags'] = [1, 1, 1]
         Data['tf']    = 4
         Data['nmax']  = 50
         Data['tol']   = 1e-15
-        from Halo_Orbits.Halo_Main import Halo_Main
-        orbitDef = Halo_Main(Data)
+
+        orbitDef = []
+
+        for i in range(1, Sequence['it'] +1):
+            print('\nEvaluating Orbit ' + str(i))
+            Data['type']   = Sequence['type' + str(i)]
+
+            if Data['type'] == 'LY':
+                Data['Ax_tgt'] = Sequence['Ax' + str(i)]
+                Data['LP']     = Sequence['LP' + str(i)]
+                orbitDef.append(Lyapunov(Data))
+            else:
+                Data['Az']  = Sequence['Az' + str(i)]
+                Data['phi']  = Sequence['phi' + str(i)]
+                Data['m'] = Sequence['m' + str(i)]
+                Data['LP']  = Sequence['LP' + str(i)]
+                orbitDef.append(Halo_Main(Data))
 
     else:
-        raise Exception('Manifolds_Main:typeError.'+\
-            '    The type selected is not valid [\'LY\'][\'HL\']!')
+        if Data['type'] == 'LY':
+            from Lyapunov_Orbits.Lyapunov import Lyapunov
+            orbitDef = Lyapunov(Data)
+
+        elif Data['type'] == 'HL':
+            Data['flags'] = [1, 1, 1]
+            Data['tf']    = 4
+            Data['nmax']  = 50
+            Data['tol']   = 1e-15
+            from Halo_Orbits.Halo_Main import Halo_Main
+            orbitDef = Halo_Main(Data)
+
+        else:
+            raise Exception('Manifolds_Main:typeError.'+\
+                '    The type selected is not valid [\'LY\'][\'HL\']!')
 
     ## 2.1 Construct manifolds
     npoints = Data['npoints'] # Number of iterations = npoints*2
@@ -116,11 +130,13 @@ def Manifolds(Data):
             print('\nConstructing Manifolds...\n')
             print('Poincaré section angle = %3.1f' % ang)
 
+            print('Unstable manifolds...')
             [states_s_e, times_s_e, SF_s_e, states_u, times_u, SF_u] = construct(
                 Data['params'], orbitDef[j-1], Data['prnt_out_dt'], npoints, 1,
                 -1, stop_fun, ang, Data['pos'][Sequence['LP' + str(j)] -1][0])
 
-            if 'Ax' + str(j +1) in Sequence:
+            if 'Ax' + str(j +1) in Sequence or 'Az' + str(j +1) in Sequence:
+                print('Stable manifolds...')
                 [states_s, times_s, SF_s, states_u_e, times_u_e, SF_u_e] = construct(
                     Data['params'], orbitDef[j], Data['prnt_out_dt'], npoints, 1,
                     1, stop_fun, ang, Data['pos'][Sequence['LP' + str(j+1)] -1][0])
