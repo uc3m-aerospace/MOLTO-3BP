@@ -3,7 +3,7 @@
 % The example consists on a transfer from GEO Earth orbit to a Moon orbit
 % (1000 km altitude)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-load_params;
+%load_params;
 addpath('../molto_3bp');
 addpath('../nsga-ii');
 % Initial Altitude
