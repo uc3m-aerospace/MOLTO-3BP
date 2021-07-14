@@ -2,6 +2,9 @@ import json
 import math
 import multiprocessing
 import random
+
+from decorator import contextmanager
+
 import Utility.helpers as h
 
 import numpy as np
@@ -15,7 +18,7 @@ class  TrajectoryCompute:
     Type of orbit of interest,
     'LY' == lyapunov orbit (2D)
     'HL' == halo orbit (3D)
-    defaults to type = 'LY'
+    defaults to random
     '''
 
     ## type of Orbit to compute
@@ -24,23 +27,31 @@ class  TrajectoryCompute:
 
     # System analyzed
     # Accepted values: 'SE', 'EM'
+    # Sun-Earth, Earth-Moon, Whatever-CelestialBody, Saturn-(1 of its Moons)
     f = 'EM'
 
     # Case choice (Orbital amplitude)
     # Lyapunov Orbit characterization
+    # Only x needed (0 < x < 1e-2)
     Ax = 1.05e-3
 
-    # Halo Orbit characterization
+    # Halo orbit amplitude (perpendicular to the plane)
+    # Halo Orbit characterization (a big number because its not nondimensional/not normalised)
+    # In km, not normalised
+    # TODO: maybe have a length agnostic normalised versioned
     Az = 110e3
 
     # 1 -> Northern variant of the orbit
+    # Rotation constant
+    # Easiest is no rotation [-PI/2; +PI/2]
     phi = 0
 
-    # 3 -> Southern variant of the orbit
+    # 1 or 3 -> Southern variant of the orbit
     m = 1
 
     # 1 -> Lagrange point L1
     # 2 -> Lagrange point L2
+    # Orbit will sit around these 2 points [1,2] in |N
     LP = 2
 
     # Angle (in degrees) between the section required and
@@ -50,6 +61,8 @@ class  TrajectoryCompute:
 
     # Numerical parameters
     # Number of points in the orbit to propagate manifolds from
+    # Linear progression on the 3D plot of blue lines
+    # Suggested 3 < n < 9
     npoints = 5
 
     # The program propagates the perturbation in the direction chosen
@@ -58,15 +71,22 @@ class  TrajectoryCompute:
 
     # Propagation of stable branch, unstable one or both
     # both branches 0, unstable branch -1, stable branch 1
+    # 0 => BLUE, RED (Towards, leaving)
+    # 1 => BLUE (Towards the orbit)
+    # -1 => RED (Leaving)
+    # TODO Red or Blue pill in the docs
     branch = 0
 
     # print time period
+    # discretisation of the trajectories
+    # granularity/specificity (points in continuous non linear lines)
     prnt_out_dt = 0.001
 
     # Sets the program to evaluate a mission from orbit 1 .. n
     # Following intersections in 1 .. n Poincaré sections
     # The only values overwritten by this parameter are the case
     # choice variables and d and branch parameters to create the chain
+    # Linear computational bloating
     input_seq = 1
 
     # Enables the introduction of data via text instead of typing
@@ -74,8 +94,6 @@ class  TrajectoryCompute:
 
     # In order to introduce data from the exterior, the program expects a .txt input
     file = '/Externals/Samples/invariant_manifolds_sample.txt'
-
-    parallel = 1
 
 
     def __init__(self, args={}):
@@ -90,9 +108,9 @@ class  TrajectoryCompute:
             if 'Ax' in args:
                 self.Ax = float(args.get("Ax"))
             if 'Az' in args:
-                self.Az = int(args.get("Az"))
+                self.Az = float(args.get("Az"))
             if 'phi' in args:
-                self.phi = int(args.get("phi"))
+                self.phi = float(args.get("phi"))
             if 'm' in args:
                 self.m = int(args.get("m"))
             if 'LP' in args:
@@ -122,8 +140,6 @@ class  TrajectoryCompute:
             if 'file' in args:
                 self.file = args.get("file")
 
-            if 'prallel' in args:
-                self.parallel = args.get('parallel')
 
     @contextmanager
     def poolcontext(*args, **kwargs):
@@ -166,14 +182,14 @@ if __name__ == '__main__':
     parser.add_argument('-type', '--type', type=str, help='', required=False)
     parser.add_argument('-f', '--f',  type=str, help='', required=False)
     parser.add_argument('-Ax', '--Ax', type=float, help='',  required=False)
-    parser.add_argument('-Az', '--Az', type=int, help='',  required=False)
+    parser.add_argument('-Az', '--Az', type=float, help='',  required=False)
     parser.add_argument('-m', '--m', type=int, required=False)
-    parser.add_argument('-phi', '--phi', type=int, required=False)
+    parser.add_argument('-phi', '--phi', type=float, required=False)
     parser.add_argument('-LP', '--LP', type=int, required=False)
 
     parser.add_argument('-poincSec', '--poincSec', type=int, help='',  required=False)
 
-    parser.add_argument('-npoints', '--npoints',  type=int, help='',  required=False)
+    parser.add_argument('-npoints', '--npoints',  type=float, help='',  required=False)
 
     parser.add_argument('-d', '--d',  type=int,
                         help='',  required=False)
@@ -188,17 +204,14 @@ if __name__ == '__main__':
     parser.add_argument('-file', '--file',  type=str,
                         help='',  required=False)
 
-    parser.add_argument('-parallel', '--parallel',  type=str,
-                        help='Whether to parallelise it or not',  required=False)
-
     args = parser.parse_args()
-    h.log(f'---- Started Orbit Trajectory compute process for {args} ----')
+    h.log(f'----Started Orbit Trajectory compute process for {args}----')
 
-    b.print_stack(f'---- Started Orbit Trajectory compute process for {args}----')
+    b.print_stack(f'----Started Orbit Trajectory compute process for {args}----')
 
     # TODO, perhaps unwrap here
     TrajectoryCompute(
         args=args
     ).main()
 
-    b.print_stack(f'---- Finished Orbit Trajectory compute with args {args} ----')
+    b.print_stack(f'----Finished Orbit Trajectory compute with args {args}----')

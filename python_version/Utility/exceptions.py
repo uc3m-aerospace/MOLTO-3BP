@@ -59,3 +59,16 @@ class HaloMainMethodError(Exception):
 ## ----------
 ## Lypaunov Orbits Exceptions ##
 
+
+## ---------
+## Manifold Sequence/Tools Exceptions
+
+class ManifoldsSequenceError(Exception):
+    """
+    Exception for Manifolds Sequence Error
+    """
+
+    def __init__(self):
+        super().__init__('Manifolds_Seq:typeError.'+\
+                'The type selected is not valid [\'LY\'][\'HL\']!')
+
