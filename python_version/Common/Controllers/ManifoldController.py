@@ -1,9 +1,7 @@
 import numpy as np
-from Sequential import queryFunc, queryFunctext
-from Load_Variables import load_variables
-from PCR3BP import PCR3BP_propagator, PCR3BP_state_derivs
-from Crossing_Det import poinc_crossing
-from Manifolds_tools import construct, plotm, fourierTest
+# TODO Skip following import
+from Utility.PCR3BP_helpers import PCR3BP_propagator, PCR3BP_state_derivs
+from Utility.manifold_helpers import construct, plotm, fourierTest, load_variables, query_func, query_func_text
 import Utility.helpers as h
 from Common.Controllers.Halo.HaloController import HaloController
 
@@ -19,11 +17,11 @@ class ManifoldController:
         ## 1. Orbit family
         if data['input_seq']:
             if not data['text']:
-                Sequence = queryFunc()
+                Sequence = query_func()
                 h.log('\n')
                 h.log(Sequence)
             else:
-                Sequence = queryFunctext(data)
+                Sequence = query_func_text(data)
                 h.log('\n')
                 h.log(Sequence)
 
@@ -56,7 +54,7 @@ class ManifoldController:
 
         else:
             if data['type'] == 'LY':
-                from Lyapunov_Orbits.Lyapunov import Lyapunov
+                from Common.Controllers.Lyapunov.LyapunovController import Lyapunov
                 orbitDef = Lyapunov(data)
 
             elif data['type'] == 'HL':
@@ -74,7 +72,7 @@ class ManifoldController:
         ## 2.1 Construct manifolds
         npoints = data['npoints']  # Number of iterations = npoints*2
 
-        stop_fun = poinc_crossing
+        stop_fun = h.poinc_crossing
 
         if data['input_seq']:
             for j in range(1, Sequence['it'] + 1):

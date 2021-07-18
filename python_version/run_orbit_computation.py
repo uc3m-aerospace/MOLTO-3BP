@@ -1,3 +1,4 @@
+import argparse
 import json
 import math
 import multiprocessing
@@ -95,6 +96,7 @@ class  TrajectoryCompute:
     # In order to introduce data from the exterior, the program expects a .txt input
     file = '/Externals/Samples/invariant_manifolds_sample.txt'
 
+    parallel = 1
 
     def __init__(self, args={}):
         '''
@@ -102,43 +104,46 @@ class  TrajectoryCompute:
         :param args:
         '''
 
-        if len(args.items()) > 0:
-            if 'f' in args:
+        if len([v is not None for k, v in args.items()]) > 0:
+            if 'f' in args and args.get("f") is not None:
                 self.f = args.get("f")
-            if 'Ax' in args:
+            if 'Ax' in args and args.get("Ax") is not None:
                 self.Ax = float(args.get("Ax"))
-            if 'Az' in args:
+            if 'Az' in args and args.get("Az") is not None:
                 self.Az = float(args.get("Az"))
-            if 'phi' in args:
+            if 'phi' in args and args.get("phi") is not None:
                 self.phi = float(args.get("phi"))
-            if 'm' in args:
+            if 'm' in args and args.get("m") is not None:
                 self.m = int(args.get("m"))
-            if 'LP' in args:
+            if 'LP' in args and args.get("LP") is not None:
                 self.LP = int(args.get("LP"))
-            if 'poincSec' in args:
+            if 'poincSec' in args and args.get("pointSec") is not None:
                 self.poincSec = np.array(json.loads(args.get("poincSec")))
 
-            if 'n_points' in args:
+            if 'n_points' in args and args.get("n_points") is not None:
                 self.npoints = int(args.get("npoints"))
 
-            if 'd' in args:
+            if 'd' in args and args.get("d") is not None:
                 self.d = int(args.get("d"))
 
 
-            if 'branch' in args:
+            if 'branch' in args and args.get("branch") is not None:
                 self.d = int(args.get("branch"))
 
-            if 'prnt_out_dt' in args:
+            if 'prnt_out_dt' in args and args.get("print_out_dt") is not None:
                 self.prnt_out_dt = float(args.get("prnt_out_dt"))
 
-            if 'input_seq' in args:
+            if 'input_seq' in args and args.get("input_seq") is not None:
                 self.prnt_out_dt = int(args.get("input_sq"))
 
-            if 'text' in args:
+            if 'text' in args and args.get("text") is not None:
                 self.text = int(args.get("text"))
 
-            if 'file' in args:
+            if 'file' in args and args.get("file") is not None:
                 self.file = args.get("file")
+
+            if 'parallel' in args and args.get("parallel") is not None:
+                self.parallel = args.get("parallel")
 
 
     @contextmanager
@@ -156,7 +161,7 @@ class  TrajectoryCompute:
                  'LP': self.LP, 'poincSec': self.poincSec, 'npoints': self.npoints, 'd': self.d, 'branch': self.branch,
                  'prnt_out_dt': self.prnt_out_dt, 'input_seq': self.input_seq, 'text': self.text, 'file': self.file}
 
-        if len(self.parallel) >= 1:
+        if len(self.parallel) > 1:
             # TODO change processes here for split plot or orbits
             config = c.Configurator()
             core_divisor = config.get('run.core_split', 3)
@@ -176,7 +181,7 @@ class  TrajectoryCompute:
 
 if __name__ == '__main__':
 
-
+    
     parser = argparse.ArgumentParser(
         description='Sync of the accounts')
     parser.add_argument('-type', '--type', type=str, help='', required=False)
@@ -210,8 +215,9 @@ if __name__ == '__main__':
     b.print_stack(f'----Started Orbit Trajectory compute process for {args}----')
 
     # TODO, perhaps unwrap here
+
     TrajectoryCompute(
-        args=args
+        args=vars(args)
     ).main()
 
     b.print_stack(f'----Finished Orbit Trajectory compute with args {args}----')

@@ -271,7 +271,7 @@ class HaloController(OrbitController):
             fid.write(text)
             fid.close()
 
-    def plot(self, plot_1=True, plot_2=True) -> (Any, Any, Any):
+    def plot(self, plot_1=True, plot_2=True) -> (object, object, object):
         ##### HALO ORBITS PLOTTING TOOL #####
         #
         # Importing required functions

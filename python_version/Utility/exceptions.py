@@ -17,6 +17,7 @@ class HaloNumCompError(Exception):
     """
     Exception for Halo Numerical Computation Error
     """
+    # TODO Add b stat message
     def __init__(self):
         super().__init__('Halo_Num_Comp:ICError.\n' + \
         'The text file selected does not have the right format!')
@@ -70,5 +71,17 @@ class ManifoldsSequenceError(Exception):
 
     def __init__(self):
         super().__init__('Manifolds_Seq:typeError.'+\
+                'The type selected is not valid [\'LY\'][\'HL\']!')
+
+
+class ManifoldsMainError(Exception):
+    """
+    Exception for Manifolds Sequence Error
+    """
+
+    def __init__(self):
+        super().__init__('Manifolds_Main:typeError.' + \
+                'The type selected is not valid [\'LY\'][\'HL\']!')
+        b.stat('Manifolds_Main:typeError.' + \
                 'The type selected is not valid [\'LY\'][\'HL\']!')
 
