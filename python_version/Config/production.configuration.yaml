@@ -1,0 +1,8 @@
+run:
+  mode: "debug"
+  verbosity: 2
+  allowconcurrency: False
+db:
+  postgres:
+    user: "test"
+    password: "blabla"

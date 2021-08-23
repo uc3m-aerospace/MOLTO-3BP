@@ -1,0 +1,11 @@
+run:
+  mode: "debug"
+  verbosity: 2
+  allowconcurrency: False
+  core_split: 3
+db:
+  postgres:
+    user: "test"
+    password: "blabla"
+plots:
+  theme: "Solarize_Light2"

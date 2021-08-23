@@ -1,0 +1,15 @@
+# Only One Type
+Type1 = LY
+Ax1 = 1.05e-3
+LP1 = 2
+ang1 = -90
+Type1 = HL
+Az2 = 110e3
+phi2 = 0
+m2 = 1
+LP2 = 1
+ang2 = -90
+# Comments like this are allowed only if the line starts with a #
+# but the structure should be preserved.
+# Note that the names of the variables and the equals
+# are written for illustrative purposes, they are not needed
