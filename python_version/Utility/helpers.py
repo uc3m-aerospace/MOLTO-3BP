@@ -5,9 +5,10 @@ import Common.Config.configurator as c
 import numpy as np
 import spiceypy as spice
 import os
-
+from Common.Config.configurator import Configurator as c
 CONFIG = 'debug'
 
+THEME = c().get('plots.theme')
 
 @d.retry_and_log(retry_attempts=1)
 def load_kernel(kernel="gm_de431.tpc", raised=True):

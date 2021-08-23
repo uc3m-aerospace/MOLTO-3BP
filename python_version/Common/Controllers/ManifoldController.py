@@ -1,22 +1,20 @@
 import numpy as np
-# TODO Skip following import
-from Utility.PCR3BP_helpers import PCR3BP_propagator, PCR3BP_state_derivs
 from Utility.manifold_helpers import construct, plotm, fourierTest, load_variables, query_func, query_func_text
 import Utility.helpers as h
 from Common.Controllers.Halo.HaloController import HaloController
+from Common.Controllers.Lyapunov.LyapunovController import LyapunovController
 
 
 class ManifoldController:
     @staticmethod
     def main_runner(data):
         h.log('\nManifolds Propagator Software\n')
-
         ## Initialize variables
         data = load_variables(data)
 
         ## 1. Orbit family
         if data['input_seq']:
-            if not data['text']:
+            if not data.get('text'):
                 Sequence = query_func()
                 h.log('\n')
                 h.log(Sequence)
@@ -32,18 +30,17 @@ class ManifoldController:
             data['tol'] = 1e-15
 
             orbitDef = []
-
+            print(Sequence['it']+1)
             for i in range(1, Sequence['it'] + 1):
                 h.log('\nEvaluating Orbit ' + str(i))
                 data['type'] = Sequence['type' + str(i)]
-
+                print('-------------------------------')
+                print(data['type'])
                 if data['type'] == 'LY':
                     data['Ax_tgt'] = Sequence['Ax' + str(i)]
                     data['LP'] = Sequence['LP' + str(i)]
-                    # Todo Compute Here for Lyupanov
-                    # ly_controller = LyupanovController(data)
-                    # orbitDef.append(ly_controller.main())
-                    # orbitDef.append(Lyapunov(data))
+                    ly_controller = LyapunovController(data)
+                    orbitDef.append(ly_controller.main())
                 else:
                     data['Az'] = Sequence['Az' + str(i)]
                     data['phi'] = Sequence['phi' + str(i)]
@@ -54,16 +51,14 @@ class ManifoldController:
 
         else:
             if data['type'] == 'LY':
-                from Common.Controllers.Lyapunov.LyapunovController import Lyapunov
-                orbitDef = Lyapunov(data)
+                orbitDef = LyapunovController(data).main()
 
             elif data['type'] == 'HL':
                 data['flags'] = [1, 1, 1]
                 data['tf'] = 4
                 data['nmax'] = 50
                 data['tol'] = 1e-15
-                from Halo_Orbits.Halo_Main import Halo_Main
-                orbitDef = Halo_Main(data)
+                orbitDef = HaloController(data).main()
 
             else:
                 raise Exception('Manifolds_Main:typeError.' + \
@@ -112,7 +107,7 @@ class ManifoldController:
                             h.log('Reassigning to %3.2f...' % ang)
 
                 h.log('\nConstructing Manifolds...\n')
-                h.log('Poincaré section angle = %3.1f' % ang)
+                h.log('Poincare section angle = %3.1f' % ang)
 
                 h.log('Unstable manifolds...')
                 [states_s_e, times_s_e, SF_s_e, states_u, times_u, SF_u] = construct(
@@ -121,6 +116,11 @@ class ManifoldController:
 
                 if 'Ax' + str(j + 1) in Sequence or 'Az' + str(j + 1) in Sequence:
                     h.log('Stable manifolds...')
+                    print('-----------------')
+                    print(len(orbitDef))
+                    print(j)
+                    print('------------')
+
                     [states_s, times_s, SF_s, states_u_e, times_u_e, SF_u_e] = construct(
                         data['params'], orbitDef[j], data['prnt_out_dt'], npoints, 1,
                         1, stop_fun, ang, data['pos'][Sequence['LP' + str(j + 1)] - 1][0])
@@ -180,11 +180,14 @@ class ManifoldController:
                 h.log('\nPost-processing data...\n')
 
                 ## 2.2 Fourier analysis
-                fourierTest(data['params'][0], data['params'][1], data['pos'][data['LP'] - 1],
-                            states_s, states_u, ang, data)
+                # We do not need Fourier Graphs for now (this was an experimental feature)
+                # fourierTest(data['params'][0], data['params'][1], data['pos'][data['LP'] - 1],
+                #             states_s, states_u, ang, data)
 
                 h.log('\nPlotting manifolds\n')
 
                 ## 2.3 Plot manifolds
+                # future: display different trajectories number parametrisation
+                # TODO DeltaT parametrisation (perhaps left/right or mono)
                 plotm(data['params'][0], data['params'][1], data['pos'][data['LP'] - 1],
                       orbitDef, states_s, SF_s, states_u, SF_u, ang, angmin)

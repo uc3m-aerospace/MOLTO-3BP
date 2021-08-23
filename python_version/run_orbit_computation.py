@@ -24,7 +24,7 @@ class  TrajectoryCompute:
 
     ## type of Orbit to compute
     # Defaults to random choice
-    type = random.choice(['LY', 'HL'])
+    type = random.choice(['HL','LY'])
 
     # System analyzed
     # Accepted values: 'SE', 'EM'
@@ -88,13 +88,14 @@ class  TrajectoryCompute:
     # The only values overwritten by this parameter are the case
     # choice variables and d and branch parameters to create the chain
     # Linear computational bloating
-    input_seq = 1
+    # 0 for only one type, 1 for file reading
+    input_seq = 0
 
     # Enables the introduction of data via text instead of typing
     text = 1
 
     # In order to introduce data from the exterior, the program expects a .txt input
-    file = '/Externals/Samples/invariant_manifolds_sample.txt'
+    file = '/Externals/Samples/invariant_manifolds_sample_second.txt'
 
     parallel = 1
 
@@ -105,8 +106,8 @@ class  TrajectoryCompute:
         '''
 
         if len([v is not None for k, v in args.items()]) > 0:
-            if 'f' in args and args.get("f") is not None:
-                self.f = args.get("f")
+            if 'f' in args and args.get("mode") is not None:
+                self.f = args.get("mode")
             if 'Ax' in args and args.get("Ax") is not None:
                 self.Ax = float(args.get("Ax"))
             if 'Az' in args and args.get("Az") is not None:
@@ -118,7 +119,7 @@ class  TrajectoryCompute:
             if 'LP' in args and args.get("LP") is not None:
                 self.LP = int(args.get("LP"))
             if 'poincSec' in args and args.get("pointSec") is not None:
-                self.poincSec = np.array(json.loads(args.get("poincSec")))
+                self.poincSec = np.array(args.get("poincSec"))
 
             if 'n_points' in args and args.get("n_points") is not None:
                 self.npoints = int(args.get("npoints"))
@@ -157,11 +158,11 @@ class  TrajectoryCompute:
         pool.terminate()
 
     def main(self):
-        input = {'type': type, 'f': self.f, 'Ax': self.Ax, 'Az': self.Az, 'm': self.m, 'phi': self.phi,
+        input = {'type': self.type, 'mode': self.f, 'Ax_tgt': self.Ax, 'Az': self.Az, 'm': self.m, 'phi': self.phi,
                  'LP': self.LP, 'poincSec': self.poincSec, 'npoints': self.npoints, 'd': self.d, 'branch': self.branch,
                  'prnt_out_dt': self.prnt_out_dt, 'input_seq': self.input_seq, 'text': self.text, 'file': self.file}
 
-        if len(self.parallel) > 1:
+        if self.parallel > 1:
             # TODO change processes here for split plot or orbits
             config = c.Configurator()
             core_divisor = config.get('run.core_split', 3)
@@ -181,11 +182,11 @@ class  TrajectoryCompute:
 
 if __name__ == '__main__':
 
-    
+
     parser = argparse.ArgumentParser(
         description='Sync of the accounts')
     parser.add_argument('-type', '--type', type=str, help='', required=False)
-    parser.add_argument('-f', '--f',  type=str, help='', required=False)
+    parser.add_argument('-f', '--mode',  type=str, help='', required=False)
     parser.add_argument('-Ax', '--Ax', type=float, help='',  required=False)
     parser.add_argument('-Az', '--Az', type=float, help='',  required=False)
     parser.add_argument('-m', '--m', type=int, required=False)

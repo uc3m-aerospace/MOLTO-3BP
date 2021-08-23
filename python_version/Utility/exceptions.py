@@ -54,6 +54,12 @@ class HaloMainMethodError(Exception):
         super().__init__('Halo_Main:methodError.' + \
                                 '    The method selected is not valid [\'insitu\'][\'text\']!')
 
+class HaloOrbitsmodeError:
+    def __init__(self):
+        super().__init__('Halo Orbits:modeError.\
+            The specified mode is outside range: [\'SE\', \'EM\']!')
+        b.stat('Halo Orbits:modeError.\
+            The specified mode is outside range: [\'SE\', \'EM\']!')
 
 
 

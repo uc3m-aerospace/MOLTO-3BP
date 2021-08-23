@@ -7,3 +7,5 @@ db:
   postgres:
     user: "test"
     password: "blabla"
+plots:
+  theme: "Solarize_Light2"

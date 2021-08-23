@@ -1,5 +1,6 @@
 import json
 import Utility.helpers as h
+import numpy as np
 
 class OrbitController:
     # Data instanced from Input Manifold
@@ -16,7 +17,10 @@ class OrbitController:
     _cache = {}
 
     def __init__(self, attributes={}):
-        self._data = json.loads(attributes.get("data", "{}"))
+        # Will be loaded as ndarray
+        # TODO Jsonize here
+        # Parse Ndarray serialised
+        self._data = attributes.get("data", "{}")
         self._generation_id = int(attributes.get("orbit_generation_id", 0))
 
 

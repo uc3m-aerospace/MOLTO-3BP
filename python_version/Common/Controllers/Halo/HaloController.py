@@ -1,3 +1,4 @@
+import codecs
 import json
 
 from Common.Controllers.OrbitController import OrbitController
@@ -16,7 +17,9 @@ class HaloController(OrbitController):
     HALO_ORBIT_SAMPLE_PATH = '\Externals\halo_orbit_sample.txt'
 
     def __init__(self, data):
-        super().__init__(attributes={"data": json.dumps(data)})
+        # for k,v in enumerate(data)
+        # jsonified_data = json.dumps(data, separators=(',', ':'), sort_keys=True, indent=4)
+        super().__init__(attributes={"data": data})
         if not self._data:
             self._data = data
 
@@ -213,7 +216,7 @@ class HaloController(OrbitController):
         # 1 orbit display
 
         tdim = t * Tconversion
-        fig2, (ax1, ax2, ax3) = plt.subplots(1, 3, constrained_layout=True)
+        fig2, (ax1, ax2, ax3) = plt.subplots(1, 3)
         ax1.plot(x[tdim < T], y[tdim < T])
         ax1.plot(0, 0, 'bx')
         ax1.plot(xL, 0, 'ro')
@@ -230,6 +233,7 @@ class HaloController(OrbitController):
             fig2.suptitle('Class I  Orbit  (L' + str(self._data.get('LP')) + ')')
         else:
             fig2.suptitle('Class II  Orbit  (L' + str(self._data.get('LP')) + ')')
+        plt.style.use(h.THEME)
         plt.show()
 
         # # Displays
@@ -256,8 +260,8 @@ class HaloController(OrbitController):
         h.log('T/2  = %.20f\n' % (Tad / 2))
 
         if self._data.get('flags')[1]:
-            self._data.get['IC'] = np.array([x0, z0, vy0])
-            (states_po, T_po, eigvec) = self.num_comp(self._data)
+            self._data['IC'] = np.array([x0, z0, vy0])
+            (states_po, T_po, eigvec) = self.num_comp()
 
             return (states_po, T_po, eigvec)
         else:
@@ -328,20 +332,21 @@ class HaloController(OrbitController):
         # Figures
 
         fig = plt.figure()
-        ax = Axes3D(fig, auto_add_to_figure=True)
+        ax = Axes3D(fig, auto_add_to_figure=False)
         fig.add_axes(ax)
         ax.plot(x, y, z)
         ax.set_xlabel('x')
         ax.set_ylabel('y')
         ax.set_zlabel('z')
 
-        fig2, (ax1, ax2, ax3) = plt.subplots(1, 3, constrained_layout=True)
+        fig2, (ax1, ax2, ax3) = plt.subplots(1, 3)
         ax1.plot(x, y)
         ax1.set(xlabel='x', ylabel='y')
         ax2.plot(x, z)
         ax2.set(xlabel='x', ylabel='z')
         ax3.plot(y, z)
         ax3.set(xlabel='y', ylabel='z')
+        plt.style.use(h.THEME)
         plt.show()
 
         return (states_po, self._data.get('tf'), eigvec[:, np.imag(eigval) == 0])

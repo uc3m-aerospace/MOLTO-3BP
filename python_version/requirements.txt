@@ -17,9 +17,12 @@
 # spiceypy==3.1.1
 
 # General bingidings (defaults to the most recent)
+boto3
 numpy
+python-magic
 scipy
 matplotlib
 spiceypy
 pyyaml
+flask
 
